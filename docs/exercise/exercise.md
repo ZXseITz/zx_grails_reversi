@@ -6,12 +6,12 @@ Matrikel Number: 15-469-411
 
 Project idea: Reversi webpage
 
-
-## Project confirmation
-
 Web page that provides a service to play Reversi against a bot (or a player),
 including a ranking.
 
+## Project confirmation
+
+Confirmed, D. König.
 
 
 ## Project delivery <to be filled by student>
