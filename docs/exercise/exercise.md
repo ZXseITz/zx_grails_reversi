@@ -2,14 +2,16 @@
 
 ## Commit Proposal
 
-Matrikel Number: <to be filled by student>
+Matrikel Number: 15-469-411
 
-Project idea short description:
+Project idea: Reversi webpage
 
 
 ## Project confirmation
 
-< to be filled by lecturer>
+Web page that provides a service to play Reversi against a bot (or a player),
+including a ranking.
+
 
 
 ## Project delivery <to be filled by student>
