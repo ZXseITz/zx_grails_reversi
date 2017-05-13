@@ -22,10 +22,9 @@ public class BoardModel {
     }
 
     private BoardModel(BoardModel boardModel) {
-        this();
         for (int i = 0; i < 8; i++) {
             for (int j = 0; j < 8; j++) {
-                this.tokens[i][j].setColor(boardModel.get(j, i).getColor());
+                this.tokens[i][j] = boardModel.get(j, i).clone();
             }
         }
         placedTokens = boardModel.placedTokens;

@@ -5,19 +5,9 @@ package reversi;
  */
 public class Token {
     public enum Color {
-        UNDEFINED(0),
-        WHITE(1),
-        BLACK(2);
-
-        private int value;
-
-        Color(int value) {
-            this.value = value;
-        }
-
-        public int getValue() {
-            return value;
-        }
+        UNDEFINED,
+        WHITE,
+        BLACK;
     }
 
     public static Color getOpposite(Color color) {
@@ -35,7 +25,7 @@ public class Token {
         this.v = v;
     }
 
-    public Token(Token token) {
+    private Token(Token token) {
         this.color = token.color;
         this.u = token.u;
         this.v = token.v;
