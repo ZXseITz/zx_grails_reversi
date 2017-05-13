@@ -4,7 +4,7 @@ package reversi;
  * Created by Claudio on 13.05.2017.
  */
 public class BoardModel {
-    private final Token[][] tokens = new Token[8][8];
+    public final Token[][] tokens = new Token[8][8];
     public Token.Color currentPlayer;
     public int placedTokens;
     public boolean prevPassed;
@@ -21,6 +21,10 @@ public class BoardModel {
         finished = false;
     }
 
+    /**
+     * Copy constructor
+     * @param boardModel Original
+     */
     private BoardModel(BoardModel boardModel) {
         for (int i = 0; i < 8; i++) {
             for (int j = 0; j < 8; j++) {

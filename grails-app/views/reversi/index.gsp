@@ -1,12 +1,38 @@
 <!doctype html>
 <html>
 <head>
-    <meta name="layout" content="main"/>
     <title>Reversi</title>
+    <style>
+    .svg {
+        background: forestgreen;
+    }
 
-    <asset:link rel="icon" href="favicon.ico" type="image/x-ico" />
+    .UNDEF {
+        fill: forestgreen;
+        border: none;
+    }
+
+    .WHITE {
+        fill: white;
+    }
+
+    .BLACK {
+        fill: black;
+    }
+    </style>
 </head>
 <body>
-<p>Reversi Test</p>
+    <svg width="400" height="400" class="svg">
+        <g:each var="tokenRow" in="${boardModel.tokens}">
+            <g:each var="token" in="${tokenRow}">
+                <circle
+                        r="18.75"
+                        cx="${token.u * 50 + 25}"
+                        cy="${token.v * 50 + 25}"
+                        class="${token.color.toString()}"
+                ></circle>
+            </g:each>
+        </g:each>
+    </svg>
 </body>
 </html>

@@ -5,9 +5,18 @@ package reversi;
  */
 public class Token {
     public enum Color {
-        UNDEFINED,
-        WHITE,
-        BLACK;
+        UNDEFINED("UNDEF"),
+        WHITE("WHITE"),
+        BLACK("BLACK");
+
+        private String name;
+        Color(String name) {
+            this.name = name;
+        }
+        @Override
+        public String toString() {
+            return name;
+        }
     }
 
     public static Color getOpposite(Color color) {
@@ -17,7 +26,7 @@ public class Token {
     }
 
     private Color color;
-    private int u, v;
+    private final int u, v;
 
     public Token(int u, int v) {
         this.color = Color.UNDEFINED;
@@ -25,6 +34,10 @@ public class Token {
         this.v = v;
     }
 
+    /**
+     * Copy constructor
+     * @param token Original to clone
+     */
     private Token(Token token) {
         this.color = token.color;
         this.u = token.u;

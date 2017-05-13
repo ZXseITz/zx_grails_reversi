@@ -1,0 +1,16 @@
+.svg {
+    background: forestgreen;
+}
+
+.UNDEF {
+    fill: forestgreen;
+    border: none;
+}
+
+.WHITE {
+    fill: white;
+}
+
+.BLACK {
+    fill: black;
+}
