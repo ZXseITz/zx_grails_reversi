@@ -30,6 +30,9 @@
                         cx="${token.u * a + a/2}"
                         cy="${token.v * b + b/2}"
                         class="${token.color.toString()}"
+                    ${token.hover.toString() != "UNDEF" ? "onmouseover = fadein()" : ""}
+                    ${token.hover.toString() != "UNDEF" ? "onmouseout = fadeout()" : ""}
+                    ${token.hover.toString() != "UNDEF" ? "onclick = send()" : ""}
                 ></circle>
             </g:each>
         </g:each>

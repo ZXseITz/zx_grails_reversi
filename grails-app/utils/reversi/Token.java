@@ -25,11 +25,12 @@ public class Token {
         else return Color.UNDEFINED;
     }
 
-    private Color color;
+    private Color color, hover;
     private final int u, v;
 
     public Token(int u, int v) {
         this.color = Color.UNDEFINED;
+        this.hover = Color.UNDEFINED;
         this.u = u;
         this.v = v;
     }
@@ -40,6 +41,7 @@ public class Token {
      */
     private Token(Token token) {
         this.color = token.color;
+        this.hover = token.hover;
         this.u = token.u;
         this.v = token.v;
     }
@@ -60,6 +62,14 @@ public class Token {
 
     public Color getColor() {
         return color;
+    }
+
+    public Color getHover() {
+        return hover;
+    }
+
+    public void setHover(Color hover) {
+        this.hover = hover;
     }
 
     public int getU() {
