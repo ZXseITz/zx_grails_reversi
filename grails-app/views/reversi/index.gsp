@@ -2,29 +2,8 @@
 <html>
 <head>
     <title>Reversi</title>
-    <style>
-    .svg {
-        background: forestgreen;
-    }
-
-    .UNDEF {
-        fill: forestgreen;
-        border: none;
-    }
-
-    .WHITE {
-        fill: white;
-    }
-
-    .BLACK {
-        fill: black;
-    }
-
-    .grid {
-        stroke: black;
-        stroke-width: 1px;
-    }
-    </style>
+    <asset:stylesheet src="reversi.css"/>
+    <asset:javascript src="reversi.js"/>
 </head>
 <body>
 <%
