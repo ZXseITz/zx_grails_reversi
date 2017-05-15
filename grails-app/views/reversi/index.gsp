@@ -31,7 +31,7 @@
                         cx="${token.u * a + a / 2}"
                         cy="${token.v * b + b / 2}"
                         class="${token.color.toString()}"
-                    ${token.getFade().getFade() != "UNDEF" ? "onmouseover=fadein(this,\"${token.getFade().getFade()}\")" : ""}
+                    ${token.getFade().getFade() != "UNDEF" ? "onmouseover=fadein(this,\"${token.getFade().toString()}\")" : ""}
                     ${token.getFade().getFade() != "UNDEF" ? "onmouseout=fadeout(this)" : ""}
                     ${token.getFade().getFade() != "UNDEF" ? "onclick=send()" : ""}
                 ></circle>

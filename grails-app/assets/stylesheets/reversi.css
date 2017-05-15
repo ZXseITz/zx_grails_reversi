@@ -11,20 +11,8 @@
     fill: white;
 }
 
-.WHITEFADE {
-    fill: white;
-    opacity: 0.5;
-    display: none;
-}
-
 .BLACK {
     fill: black;
-}
-
-.BLACKFADE {
-    fill: black;
-    opacity: 0.5;
-    display: none;
 }
 
 .grid {
