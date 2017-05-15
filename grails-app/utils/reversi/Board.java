@@ -69,17 +69,23 @@ public class Board {
     /**
      * Setup the board, ready for a new game
      */
-    public void setUpBoard() {
+    public void setUpBoard(Token.Color client) {
         iterateBoard((token, x, y) -> {
             token.setColor(Token.Color.UNDEFINED);
-            token.setHover(Token.Color.UNDEFINED);
+            token.setFade(Token.Color.UNDEFINED);
         });
-        get(3, 3).setColor(Token.Color.WHITE);
-        get(4, 4).setColor(Token.Color.WHITE);
-        get(3, 4).setColor(Token.Color.BLACK);
-        get(4, 3).setColor(Token.Color.BLACK);
+        placeToken(3, 3, Token.Color.WHITE);
+        placeToken(4, 4, Token.Color.WHITE);
+        placeToken(3, 4, Token.Color.BLACK);
+        placeToken(4, 3, Token.Color.BLACK);
 
-        getSelectableTokens(Token.Color.WHITE).forEach(token -> token.setHover(Token.Color.WHITE));
+        getSelectableTokens(Token.Color.WHITE).forEach(token -> token.setFade(client));
+    }
+
+    private void placeToken(int x, int y, Token.Color c) {
+        Token t = get(x, y);
+        t.setColor(c);
+        t.setFade(Token.Color.UNDEFINED);
     }
 
     /**
@@ -91,7 +97,7 @@ public class Board {
         List<Token> selectables = new ArrayList<>(20);
         if (!model.finished) {
             iterateBoard((token, x, y) -> {
-                if (token.isUnplaced() && validatePlacing(token, c)) {
+                if (!token.isPlaced() && validatePlacing(token, c)) {
                     selectables.add(token);
                 }
             });
@@ -153,12 +159,8 @@ public class Board {
         StringBuilder sb = new StringBuilder();
         for (int y = 0; y < 8; y++) {
             for (int x = 0; x < 8; x++) {
-                String c;
                 Token t = get(x, y);
-                if (t.isWhite()) c = "W";
-                else if (t.isBlack()) c = "B";
-                else c = "U";
-                sb.append(c + "  ");
+                sb.append(t.isPlaced() ? (t.isWhite() ? "W" : "B") : "U" + "  ");
             }
             sb.append("\n");
         }

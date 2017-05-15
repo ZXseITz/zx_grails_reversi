@@ -5,17 +5,21 @@ package reversi;
  */
 public class Token {
     public enum Color {
-        UNDEFINED("UNDEF"),
-        WHITE("WHITE"),
-        BLACK("BLACK");
+        UNDEFINED("UNDEF", "UNDEF"),
+        WHITE("WHITE", "WHITEFADE"),
+        BLACK("BLACK", "BLACKFADE");
 
-        private String name;
-        Color(String name) {
+        private String name, fade;
+        Color(String name, String fade) {
             this.name = name;
+            this.fade = fade;
         }
         @Override
         public String toString() {
             return name;
+        }
+        public String getFade() {
+            return fade;
         }
     }
 
@@ -25,12 +29,12 @@ public class Token {
         else return Color.UNDEFINED;
     }
 
-    private Color color, hover;
+    private Color color, fade;
     private final int u, v;
 
     public Token(int u, int v) {
         this.color = Color.UNDEFINED;
-        this.hover = Color.UNDEFINED;
+        this.fade = Color.UNDEFINED;
         this.u = u;
         this.v = v;
     }
@@ -41,7 +45,7 @@ public class Token {
      */
     private Token(Token token) {
         this.color = token.color;
-        this.hover = token.hover;
+        this.fade = token.fade;
         this.u = token.u;
         this.v = token.v;
     }
@@ -52,24 +56,24 @@ public class Token {
     public boolean isBlack() {
         return color == Color.BLACK;
     }
-    public boolean isUnplaced() {
-        return color == Color.UNDEFINED;
-    }
-
-    public void setColor(Color color) {
-        this.color = color;
+    public boolean isPlaced() {
+        return color != Color.UNDEFINED;
     }
 
     public Color getColor() {
         return color;
     }
 
-    public Color getHover() {
-        return hover;
+    public void setColor(Color color) {
+        this.color = color;
     }
 
-    public void setHover(Color hover) {
-        this.hover = hover;
+    public Color getFade() {
+        return fade;
+    }
+
+    public void setFade(Color fade) {
+        this.fade = fade;
     }
 
     public int getU() {

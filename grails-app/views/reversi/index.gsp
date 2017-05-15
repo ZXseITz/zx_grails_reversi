@@ -3,6 +3,7 @@
 <head>
     <title>Reversi</title>
     <asset:stylesheet src="reversi.css"/>
+    <asset:javascript src="jquery-2.2.0.min.js"/>
     <asset:javascript src="reversi.js"/>
 </head>
 <body>
@@ -27,12 +28,12 @@
             <g:each var="token" in="${tokenRow}">
                 <circle
                         r="${r}"
-                        cx="${token.u * a + a/2}"
-                        cy="${token.v * b + b/2}"
+                        cx="${token.u * a + a / 2}"
+                        cy="${token.v * b + b / 2}"
                         class="${token.color.toString()}"
-                    ${token.hover.toString() != "UNDEF" ? "onmouseover = fadein()" : ""}
-                    ${token.hover.toString() != "UNDEF" ? "onmouseout = fadeout()" : ""}
-                    ${token.hover.toString() != "UNDEF" ? "onclick = send()" : ""}
+                    ${token.getFade().getFade() != "UNDEF" ? "onmouseover=fadein(this,\"${token.getFade().getFade()}\")" : ""}
+                    ${token.getFade().getFade() != "UNDEF" ? "onmouseout=fadeout(this)" : ""}
+                    ${token.getFade().getFade() != "UNDEF" ? "onclick=send()" : ""}
                 ></circle>
             </g:each>
         </g:each>
