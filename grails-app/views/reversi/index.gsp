@@ -38,6 +38,7 @@
         <g:each var="tokenRow" in="${boardModel.tokens}">
             <g:each var="token" in="${tokenRow}">
                 <circle
+                        id="t${token.getU()}${token.getV()}"
                         r="${r}"
                         cx="${token.u * a + a / 2}"
                         cy="${token.v * b + b / 2}"
@@ -45,9 +46,9 @@
                         data-selectable="0"
                         data-u = "${token.getU()}"
                         data-v = "${token.getV()}"
-                        onmouseover="UserAction.mouseOver(this)"
-                        onmouseout="UserAction.mouseOut(this)"
-                        onclick="UserAction.click(this)"
+                        onmouseover="handleMouseOver(this)"
+                        onmouseout="handleMouseOut(this)"
+                        onclick="handleClick(this)"
                 ></circle>
             </g:each>
         </g:each>
