@@ -3,10 +3,23 @@
 <head>
     <title>Reversi</title>
     <asset:stylesheet src="reversi.css"/>
-    <asset:javascript src="jquery-2.2.0.min.js"/>
-    <asset:javascript src="reversi.js"/>
+    <asset:javascript src="application.js"/>
+    <asset:javascript src="spring-websocket" />
+    <script type="text/javascript">
+    window.onload = function () {
+        var socket = new SockJS("${createLink(uri: '/stomp')}");
+        var client = Stomp.over(socket);
+
+        client.connect({}, function () {
+            client.subscribe("/topic/hello", function (message) {
+                console.log(message);
+            })
+        })
+    };
+</script>
 </head>
 <body>
+
 <%
     //needs to stay in body todo remove in production code
     double width = 400
@@ -31,9 +44,12 @@
                         cx="${token.u * a + a / 2}"
                         cy="${token.v * b + b / 2}"
                         class="${token.color.toString()}"
-                    ${token.getFade().getFade() != "UNDEF" ? "onmouseover=fadein(this,\"${token.getFade().toString()}\")" : ""}
-                    ${token.getFade().getFade() != "UNDEF" ? "onmouseout=fadeout(this)" : ""}
-                    ${token.getFade().getFade() != "UNDEF" ? "onclick=send()" : ""}
+                        data-selectable="0"
+                        data-u = "${token.getU()}"
+                        data-v = "${token.getV()}"
+                        %{--onmouseover="UserAction.mouseOver(this)"--}%
+                        %{--onmouseout="UserAction.mouseOut(this)"--}%
+                        %{--onclick="UserAction.click(this)"--}%
                 ></circle>
             </g:each>
         </g:each>
