@@ -3,20 +3,15 @@
 <head>
     <title>Reversi</title>
     <asset:stylesheet src="reversi.css"/>
+    <asset:javascript src="reversiConnection.js"/>
+
     <asset:javascript src="application.js"/>
     <asset:javascript src="spring-websocket" />
     <script type="text/javascript">
-    window.onload = function () {
-        var socket = new SockJS("${createLink(uri: '/stomp')}");
-        var client = Stomp.over(socket);
-
-        client.connect({}, function () {
-            client.subscribe("/topic/hello", function (message) {
-                console.log(message);
-            })
-        })
-    };
-</script>
+        window.onload = function () {
+            const connection = new Connection("${createLink(uri: '/stomp')}");
+        };
+    </script>
 </head>
 <body>
 
