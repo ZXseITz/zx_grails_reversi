@@ -2,11 +2,11 @@
  * Created by Claudio on 16.05.2017.
  */
 function handleMouseOver(e) {
-    if (validateToken(e)) Effects.fadeIn(e, 'WHITE');
+    if (validateToken(e)) fadeInToken(e, 'WHITE');
 }
 
 function handleMouseOut(e) {
-    if (validateToken(e)) Effects.fadeOut(e);
+    if (validateToken(e)) fadeOutToken(e);
 }
 
 function handleClick(e) {
