@@ -5,21 +5,17 @@ package reversi;
  */
 public class Token {
     public enum Color {
-        UNDEFINED("UNDEF", "UNDEF"),
-        WHITE("WHITE", "WHITEFADE"),
-        BLACK("BLACK", "BLACKFADE");
+        UNDEFINED("UNDEF"),
+        WHITE("WHITE"),
+        BLACK("BLACK");
 
-        private String name, fade;
-        Color(String name, String fade) {
+        private String name;
+        Color(String name) {
             this.name = name;
-            this.fade = fade;
         }
         @Override
         public String toString() {
             return name;
-        }
-        public String getFade() {
-            return fade;
         }
     }
 
@@ -29,12 +25,13 @@ public class Token {
         else return Color.UNDEFINED;
     }
 
-    private Color color, fade;
+    private Color color;
+    private byte selectable;
     private final int u, v;
 
     public Token(int u, int v) {
         this.color = Color.UNDEFINED;
-        this.fade = Color.UNDEFINED;
+        this.selectable = 0;
         this.u = u;
         this.v = v;
     }
@@ -45,7 +42,7 @@ public class Token {
      */
     private Token(Token token) {
         this.color = token.color;
-        this.fade = token.fade;
+        this.selectable = token.selectable;
         this.u = token.u;
         this.v = token.v;
     }
@@ -68,12 +65,12 @@ public class Token {
         this.color = color;
     }
 
-    public Color getFade() {
-        return fade;
+    public byte isSelectable() {
+        return selectable;
     }
 
-    public void setFade(Color fade) {
-        this.fade = fade;
+    public void setSelectable(byte selectable) {
+        this.selectable = selectable;
     }
 
     public int getU() {

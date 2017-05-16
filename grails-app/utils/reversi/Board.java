@@ -72,20 +72,18 @@ public class Board {
     public void setUpBoard(Token.Color client) {
         iterateBoard((token, x, y) -> {
             token.setColor(Token.Color.UNDEFINED);
-            token.setFade(Token.Color.UNDEFINED);
         });
         placeToken(3, 3, Token.Color.WHITE);
         placeToken(4, 4, Token.Color.WHITE);
         placeToken(3, 4, Token.Color.BLACK);
         placeToken(4, 3, Token.Color.BLACK);
-
-        getSelectableTokens(Token.Color.WHITE).forEach(token -> token.setFade(client));
+//
+//        getSelectableTokens(Token.Color.WHITE).forEach(token -> token.setFade(client));
     }
 
     private void placeToken(int x, int y, Token.Color c) {
         Token t = get(x, y);
         t.setColor(c);
-        t.setFade(Token.Color.UNDEFINED);
     }
 
     /**
