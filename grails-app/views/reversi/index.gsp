@@ -4,6 +4,9 @@
     <title>Reversi</title>
     <asset:stylesheet src="reversi.css"/>
     <asset:javascript src="reversiConnection.js"/>
+    <asset:javascript src="reversiCOM.js"/>
+    <asset:javascript src="reversiUserAction.js"/>
+    <asset:javascript src="reversiEffects.js"/>
 
     <asset:javascript src="application.js"/>
     <asset:javascript src="spring-websocket" />
@@ -42,9 +45,9 @@
                         data-selectable="0"
                         data-u = "${token.getU()}"
                         data-v = "${token.getV()}"
-                        %{--onmouseover="UserAction.mouseOver(this)"--}%
-                        %{--onmouseout="UserAction.mouseOut(this)"--}%
-                        %{--onclick="UserAction.click(this)"--}%
+                        onmouseover="UserAction.mouseOver(this)"
+                        onmouseout="UserAction.mouseOut(this)"
+                        onclick="UserAction.click(this)"
                 ></circle>
             </g:each>
         </g:each>
