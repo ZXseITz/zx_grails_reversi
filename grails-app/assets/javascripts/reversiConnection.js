@@ -6,7 +6,7 @@ function Connection(link) {
     const client = Stomp.over(socket);
 
     client.connect({}, function () {
-        client.subscribe("/topic/hello", onMessage)
+        client.subscribe("/topic/messages", onMessage)
     });
 
     function onMessage(message) {

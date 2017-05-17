@@ -1,11 +1,11 @@
 package reversi
 
+import grails.web.Controller
 import org.springframework.messaging.handler.annotation.MessageMapping
 import org.springframework.messaging.handler.annotation.SendTo
 
+@Controller
 class ReversiController {
-
-
     def index() {
         Token.Color client = Token.Color.WHITE
         BoardModel model = new BoardModel()
@@ -14,10 +14,9 @@ class ReversiController {
         render view:"index", model:[boardModel: model]
     }
 
-    @MessageMapping("/hello")
-    @SendTo("/topic/hello")
-    protected String hello(String world) {
-        return "hello from controller, ${world}!"
+    @MessageMapping("/add")
+    @SendTo("/topic/messages")
+    String send(String message) {
+        return "Server: " + message
     }
 }
-
