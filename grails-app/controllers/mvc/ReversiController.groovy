@@ -1,4 +1,8 @@
-package reversi
+package mvc
+
+import reversi.Board
+import reversi.BoardModel
+import reversi.Token
 
 class ReversiController {
     def index() {

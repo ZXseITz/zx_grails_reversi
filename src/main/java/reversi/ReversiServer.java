@@ -2,6 +2,7 @@ package reversi;
 
 import net.sf.ehcache.util.concurrent.ConcurrentHashMap;
 
+import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import javax.servlet.annotation.WebListener;
@@ -14,18 +15,18 @@ import java.util.Map;
  * Created by Claudio on 17.05.2017.
  */
 @WebListener
-@ServerEndpoint("/annotated")
-public class MyServletContextListenerAnnotated implements ServletContextListener {
+@ServerEndpoint("/server")
+public class ReversiServer implements ServletContextListener {
     private final Map<String, Session> users = new ConcurrentHashMap<>();
 
     @Override
     public void contextInitialized(ServletContextEvent servletContextEvent) {
-        final ServerContainer serverContainer = (ServerContainer) servletContextEvent.getServletContext()
+        ServletContext servletContext = servletContextEvent.getServletContext();
+        final ServerContainer serverContainer = (ServerContainer) servletContext
                 .getAttribute("javax.websocket.server.ServerContainer");
-
         try {
-            serverContainer.addEndpoint(MyServletContextListenerAnnotated.class);
-        } catch (DeploymentException e) {
+            serverContainer.addEndpoint(ReversiServer.class);
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -43,11 +44,6 @@ public class MyServletContextListenerAnnotated implements ServletContextListener
     @OnClose
     public void onClose(Session client) {
         users.remove(client.getId());
-    }
-
-    @OnError
-    public void onError(Session client) {
-
     }
 
     @OnMessage
