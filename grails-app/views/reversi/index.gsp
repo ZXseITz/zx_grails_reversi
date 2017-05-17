@@ -14,7 +14,8 @@
         // global use
         let connection;
         window.onload = function () {
-            connection = new Connection("ws://127.0.0.1:8080/reversi/server");
+            const url = "${createLink(uri: '/server', absolute: true).replaceFirst(/http/, /ws/)}";
+            connection = new Connection(url);
         };
     </script>
 </head>

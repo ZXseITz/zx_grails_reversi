@@ -32,10 +32,12 @@ function Connection(link) {
     };
 
     function sendJSON(type, data) {
-        socket.send(JSON.stringify({
+        var json = JSON.stringify({
             'type': type,
             'data': data
-        }));
+        });
+        console.log("sended: " + json);
+        socket.send(json);
     }
 
     this.botGame = function () {
