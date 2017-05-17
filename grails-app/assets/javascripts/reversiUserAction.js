@@ -1,17 +1,20 @@
 /**
  * Created by Claudio on 16.05.2017.
  */
-function handleMouseOver(e) {
-    if (validateToken(e)) fadeInToken(e, 'WHITE');
+function userAction() {
 }
 
-function handleMouseOut(e) {
-    if (validateToken(e)) fadeOutToken(e);
-}
+userAction.mouseOver = function(e) {
+    if (validateToken(e)) tokenEffects.fadeInToken(e, 'WHITE');
+};
 
-function handleClick(e) {
+userAction.mouseOut = function(e) {
+    if (validateToken(e)) tokenEffects.fadeOutToken(e);
+};
+
+userAction.click = function(e) {
     if (validateToken(e)) connection.place($(e).data('u'), $(e).data('v'))
-}
+};
 
 function validateToken(e) {
     return $(e).data('selectable') === 1;

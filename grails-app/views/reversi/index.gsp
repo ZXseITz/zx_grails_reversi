@@ -47,9 +47,9 @@
                     data-selectable="1"
                     data-u="${token.getU()}"
                     data-v="${token.getV()}"
-                    onmouseover="handleMouseOver(this)"
-                    onmouseout="handleMouseOut(this)"
-                    onclick="handleClick(this)"
+                    onmouseover="userAction.mouseOver(this)"
+                    onmouseout="userAction.mouseOut(this)"
+                    onclick="userAction.click(this)"
             ></circle>
         </g:each>
     </g:each>
