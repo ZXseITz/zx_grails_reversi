@@ -14,7 +14,7 @@
         // global use
         let connection;
         window.onload = function () {
-            connection = new Connection("${createLink(uri: '/stomp')}");
+            connection = new Connection("ws://127.0.0.1:8080/reversiServer");
         };
     </script>
 </head>

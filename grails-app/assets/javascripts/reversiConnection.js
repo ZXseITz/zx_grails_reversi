@@ -2,14 +2,22 @@
  * Created by Claudio on 16.05.2017.
  */
 function Connection(link) {
-    const socket = new SockJS(link);
-    const client = Stomp.over(socket);
+    const socket = new WebSocket(link);
 
-    client.connect({}, function () {
-        client.subscribe("/topic/hello", onMessage)
-    });
+    socket.onopen = function () {
+        console.log("connected");
+    };
 
-    function onMessage(message) {
+    socket.onclose = function () {
+        console.log("disconnected");
+    };
+
+    socket.onerror = function (e) {
+        console.log("error: ");
+        console.log(e);
+    };
+
+    socket.onMessage = function(message) {
         let json = JSON.parse(message.data);
         console.log("JSON Data:");
         console.log(json);
@@ -21,10 +29,10 @@ function Connection(link) {
             case COM.SERVER_DEFEAT:
             case COM.SERVER_REMIS:
         }
-    }
+    };
 
     function sendJSON(type, data) {
-        client.send(JSON.stringify({
+        socket.send(JSON.stringify({
             'type': type,
             'data': data
         }));
