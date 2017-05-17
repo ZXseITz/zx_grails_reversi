@@ -14,7 +14,7 @@
         // global use
         let connection;
         window.onload = function () {
-            connection = new Connection("ws://127.0.0.1:8080/reversiServer");
+            connection = new Connection("ws://localhost:8080/reversi/annotated");
         };
     </script>
 </head>
