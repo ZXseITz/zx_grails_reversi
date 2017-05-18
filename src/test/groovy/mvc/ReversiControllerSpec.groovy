@@ -1,7 +1,6 @@
 package mvc
 
 import grails.test.mixin.TestFor
-import reversi.ReversiController
 import spock.lang.Specification
 
 /**

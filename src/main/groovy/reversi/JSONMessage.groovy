@@ -1,7 +1,4 @@
 package reversi
-
-import groovy.json.JsonBuilder
-
 /**
  * Created by Claudio on 16.05.2017.
  */

@@ -14,7 +14,8 @@
         // global use
         let connection;
         window.onload = function () {
-            connection = new Connection("${createLink(uri: '/stomp')}");
+            const url = "${createLink(uri: '/reversi/room', absolute: true).replaceFirst(/http/, /ws/)}";
+            connection = new Connection(url);
         };
     </script>
 </head>
