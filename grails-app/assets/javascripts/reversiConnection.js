@@ -5,11 +5,12 @@ function Connection(link) {
     const socket = new WebSocket(link);
 
     socket.onopen = function () {
-        console.log("connected");
+        console.log("connected to " + socket.url);
+
     };
 
     socket.onclose = function () {
-        console.log("disconnected");
+        console.log("disconnected from " + socket.url);
     };
 
     socket.onerror = function (e) {

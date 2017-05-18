@@ -5,8 +5,9 @@ import grails.boot.config.GrailsAutoConfiguration
 
 class Application extends GrailsAutoConfiguration {
     Closure doWithSpring() {
-        {->
-            wsReversiConfig DefaultWsReversiConfig
+        {
+            ->
+            reversiConfig DefaultReversiConfig
         }
     }
     static void main(String[] args) {

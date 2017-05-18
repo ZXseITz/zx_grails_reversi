@@ -15,7 +15,7 @@ import java.util.Map;
  * Created by Claudio on 17.05.2017.
  */
 @WebListener
-@ServerEndpoint("/server")
+@ServerEndpoint("/reversi/room")
 public class ReversiServer implements ServletContextListener {
     private final Map<String, Session> users = new ConcurrentHashMap<>();
 
@@ -44,6 +44,11 @@ public class ReversiServer implements ServletContextListener {
     @OnClose
     public void onClose(Session client) {
         users.remove(client.getId());
+    }
+
+    @OnError
+    public void onError(Throwable t) {
+
     }
 
     @OnMessage

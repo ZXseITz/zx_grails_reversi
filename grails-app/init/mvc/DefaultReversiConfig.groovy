@@ -10,7 +10,7 @@ import javax.servlet.ServletException
 /**
  * Created by Claudio on 18.05.2017.
  */
-class DefaultWsReversiConfig {
+class DefaultReversiConfig {
     @Bean
     ServletContextInitializer myInitializer() {
         return new ServletContextInitializer() {
