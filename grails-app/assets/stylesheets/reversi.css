@@ -2,17 +2,9 @@
     background: forestgreen;
 }
 
-.UNDEF {
+.TOKEN {
     fill: forestgreen;
     border: none;
-}
-
-.WHITE {
-    fill: white;
-}
-
-.BLACK {
-    fill: black;
 }
 
 .grid {
