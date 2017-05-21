@@ -5,17 +5,22 @@ package reversi;
  */
 public class Token {
     public enum Color {
-        UNDEFINED("UNDEF"),
-        WHITE("WHITE"),
-        BLACK("BLACK");
+        UNDEFINED("UNDEF", 0),
+        WHITE("WHITE", 1),
+        BLACK("BLACK", 2);
 
         private String name;
-        Color(String name) {
+        private int value;
+        Color(String name, int value) {
             this.name = name;
+            this.value = value;
         }
         @Override
         public String toString() {
             return name;
+        }
+        public int getValue() {
+            return value;
         }
     }
 
