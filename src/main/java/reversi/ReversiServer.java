@@ -1,11 +1,10 @@
 package reversi;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import net.sf.ehcache.util.concurrent.ConcurrentHashMap;
-import org.grails.web.json.JSONElement;
+import reversi.actions.PlacingAction;
+import reversi.actions.SelectionAction;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
@@ -74,23 +73,48 @@ public class ReversiServer implements ServletContextListener {
             JsonObject o = new JsonParser().parse(message).getAsJsonObject();
             int type = o.get("type").getAsInt();
             switch (type) {
-                case JSONMessage.CLIENT_NEW_BOT_GAME:
-                    Round r = new Round(users.get(client.getId()), new Board(new BoardModel()), Math.random() < 0.5? Token.Color.WHITE: Token.Color.BLACK);
+                case JSONMessage.CLIENT_NEW_BOT_GAME: {
+                    Round r = new Round(users.get(client.getId()), new Board(new BoardModel()), Token.Color.WHITE /* Math.random() < 0.5? Token.Color.WHITE: Token.Color.BLACK */);
 //                    rounds.putIfAbsent(r.getId(), r);
                     users.get(client.getId()).setRound(r);
 
-                    List<Token> list = r.getBoard().getSelectableTokens(r.getPlayerColor());
-                    Token[] selectables = new Token[list.size()];
-                    String json = JSONHandler.buildJsonServerInit(r.getPlayerColor(), list.toArray(selectables));
+                    if (r.getPlayerColor() == Token.Color.WHITE) {
+                        List<Token> list = r.getBoard().getSelectableTokens(r.getPlayerColor());
+                        Token[] selection = new Token[list.size()];
+                        list.toArray(selection);
+                        SelectionAction action = new SelectionAction(r.getPlayerColor(), selection);
+                        String json = JSONHandler.buildJsonSelection(action);
+                        client.getBasicRemote().sendText(json);
+                    }
 
-                    client.getBasicRemote().sendText(json);
 //                    System.out.println("send to Player " + client.getId() + " json " + json);
                     break;
+                }
                 case JSONMessage.CLIENT_NEW_GAME:
+                    //TODO implement pvp
                     break;
-                case JSONMessage.CLIENT_PLACE:
+                case JSONMessage.CLIENT_PLACE: {
+                    Player p = users.get(client.getId());
+                    if (p.isInRound()) {
+                        Round r = p.getRound();
+                        Board board = r.getBoard();
+                        int[] xy = JSONHandler.getXYfromJSON(o.getAsJsonObject("data"));
+                        Token source = board.get(xy[0], xy[1]);
+                        List<Token> toChange = board.detectNeighbours(source, r.getPlayerColor());
+                        if (toChange.size() > 0) {
+                            Token[] changes = new Token[toChange.size()];
+                            toChange.toArray(changes);
+                            PlacingAction action = new PlacingAction(r.getPlayerColor(), source, changes);
+                            String json = JSONHandler.buildJSONPlace(action);
+                            p.send(json);
+
+                            //TODO send action to bot
+                        }
+                    }
                     break;
+                }
                 case JSONMessage.CLIENT_PASS:
+
                     break;
             }
         } catch (Exception e) {

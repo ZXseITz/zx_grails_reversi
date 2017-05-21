@@ -1,6 +1,7 @@
 package reversi;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -131,13 +132,24 @@ public class Board {
         return valid;
     }
 
-    /**
-     * Validates the incoming action
-     * @return
-     */
-    public boolean validate() {
-        //TODO
-        return false;
+    public List<Token> detectNeighbours(Token source, Token.Color player) {
+        List<Token> tokenToChange = new ArrayList<>(20);
+        Token[] tokenLine = new Token[6];
+        for (int[] loopVar : loopVars) {
+            int tx = source.getU();
+            int ty = source.getV();
+            int n = 0;
+            boolean valid;
+            do {
+                tx += loopVar[0];
+                ty += loopVar[1];
+                valid = tx >= 0 && tx < 8 && ty >= 0 && ty < 8 && get(tx, ty).isPlaced();
+            } while (valid && (tokenLine[n++] = get(tx, ty)).getColor() != player);
+            if (valid && n > 1) {
+                tokenToChange.addAll(Arrays.asList(tokenLine).subList(0, n - 1));
+            }
+        }
+        return tokenToChange;
     }
 
     /**
