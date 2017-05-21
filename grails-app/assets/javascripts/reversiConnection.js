@@ -1,38 +1,52 @@
 /**
  * Created by Claudio on 16.05.2017.
  */
-function Connection(link) {
-    const socket = new WebSocket(link);
+function Connection(game) {
+    let socket;
 
-    socket.onopen = function () {
-        console.log("connected to " + socket.url);
+    this.connect = function (url) {
+        socket = new WebSocket(url);
+
+        socket.onopen = function () {
+            console.log("connected to " + socket.url);
+        };
+
+        socket.onclose = function () {
+            console.log("disconnected from " + socket.url);
+        };
+
+        socket.onerror = function (e) {
+            console.log("error: ");
+            console.log(e);
+        };
+
+        socket.onmessage = function(message) {
+            let json = JSON.parse(message.data);
+            console.log("JSON Data:");
+            console.log(json);
+            switch (json.type) {
+                case COM.SERVER_INIT:
+                    game.setUp(json.data["color"], json.data["selectables"]);
+                    break;
+                case COM.SERVER_PLACE:
+                    game.place(json.data);
+                    break;
+                case COM.SERVER_PASS:
+                    game.pass(json.data);
+                    break;
+                case COM.SERVER_END:
+                    game.end(json.data);
+                    break;
+            }
+        };
     };
 
-    socket.onclose = function () {
-        console.log("disconnected from " + socket.url);
-    };
-
-    socket.onerror = function (e) {
-        console.log("error: ");
-        console.log(e);
-    };
-
-    socket.onMessage = function(message) {
-        let json = JSON.parse(message.data);
-        console.log("JSON Data:");
-        console.log(json);
-        switch (json.type) {
-            case COM.SERVER_INIT:
-            case COM.SERVER_PLACE:
-            case COM.SERVER_PASS:
-            case COM.SERVER_VICTORY:
-            case COM.SERVER_DEFEAT:
-            case COM.SERVER_REMIS:
-        }
+    this.disconnect = function() {
+        socket.close();
     };
 
     function sendJSON(type, data) {
-        var json = JSON.stringify({
+        let json = JSON.stringify({
             'type': type,
             'data': data
         });
