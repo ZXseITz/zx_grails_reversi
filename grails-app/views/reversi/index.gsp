@@ -6,16 +6,17 @@
     <asset:javascript src="reversiConnection.js"/>
     <asset:javascript src="reversiCOM.js"/>
     <asset:javascript src="reversiUserAction.js"/>
-    <asset:javascript src="reversiEffects.js"/>
+    <asset:javascript src="TokenHandler.js"/>
 
     <asset:javascript src="application.js"/>
     <asset:javascript src="spring-websocket"/>
     <script type="text/javascript">
         // global use
-        let connection;
+        let game;
+        const url = "${createLink(uri: '/reversi/room', absolute: true).replaceFirst(/http/, /ws/)}";
         window.onload = function () {
-            const url = "${createLink(uri: '/reversi/room', absolute: true).replaceFirst(/http/, /ws/)}";
-            connection = new Connection(url);
+            game = new Game();
+            game.getConnection().connect(url);
         };
     </script>
 </head>
@@ -37,17 +38,17 @@
     </g:each>
 
 <!-- draw tokens -->
-    <g:each var="tokenRow" in="${boardModel.tokens}">
-        <g:each var="token" in="${tokenRow}">
+    <g:each var="v" in="${0..7}">
+        <g:each var="u" in="${0..7}">
             <circle
-                    id="t${token.getU()}${token.getV()}"
+                    id="t${u}${v}"
                     r="${r}"
-                    cx="${token.u * a + a / 2}"
-                    cy="${token.v * b + b / 2}"
-                    class="${token.color.toString()}"
-                    data-selectable="1"
-                    data-u="${token.getU()}"
-                    data-v="${token.getV()}"
+                    cx="${u * a + a / 2}"
+                    cy="${v * b + b / 2}"
+                    class="TOKEN"
+                    data-selectable="0"
+                    data-u="${u}"
+                    data-v="${v}"
                     onmouseover="userAction.mouseOver(this)"
                     onmouseout="userAction.mouseOut(this)"
                     onclick="userAction.click(this)"
@@ -55,5 +56,6 @@
         </g:each>
     </g:each>
 </svg>
+<button type="button" onclick="userAction.newBotGame()">new bot game</button>
 </body>
 </html>
