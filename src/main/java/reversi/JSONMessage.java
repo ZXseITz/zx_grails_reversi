@@ -9,7 +9,8 @@ abstract class JSONMessage {
     public static final int SERVER_INIT = 2;
 
     public static final int CLIENT_PLACE = 10;
-    public static final int SERVER_PLACE = 11;
+    public static final int SERVER_PLACE_CLIENT = 11;
+    public static final int SERVER_PLACE_OPPONENT = 12;
 
     public static final int CLIENT_PASS = 20;
     public static final int SERVER_PASS = 21;

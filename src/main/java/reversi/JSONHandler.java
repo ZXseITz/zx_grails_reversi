@@ -4,6 +4,8 @@ import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import reversi.actions.PlacingAction;
+import reversi.actions.SelectionAction;
 
 /**
  * Created by Claudio on 21.05.2017.
@@ -25,14 +27,34 @@ public abstract class JSONHandler {
         return t;
     }
 
-    public static String buildJsonServerInit(Token.Color color, Token[] selectables) {
-        JsonObject o = new JsonObject();
-        o.addProperty("color", color.getValue());
-        JsonArray selects = new JsonArray();
-        for (Token token : selectables) {
-            selects.add(buildToken(token));
+    private static JsonArray buildTokenArray(Token[] tokens) {
+        JsonArray array = new JsonArray();
+        for (Token token : tokens) {
+            array.add(buildToken(token));
         }
-        o.add("selectables", selects);
-        return buildJson(JSONMessage.SERVER_INIT, o);
+        return array;
+    }
+
+    // server to client
+
+    public static String buildJsonSelection(SelectionAction action) {
+        JsonObject data = new JsonObject();
+        data.addProperty("color", action.getPlayer().getValue());
+        data.add("selection", buildTokenArray(action.getSelection()));
+        return buildJson(JSONMessage.SERVER_INIT, data);
+    }
+    
+    public static String buildJSONPlace(PlacingAction action) {
+        JsonObject data = new JsonObject();
+        data.addProperty("color", action.getPlayer().getValue());
+        data.add("source", buildToken(action.getSource()));
+        data.add("changes", buildTokenArray(action.getToChange()));
+        return buildJson(JSONMessage.SERVER_PLACE_CLIENT, data);
+    }
+
+    // client to server
+
+    public static int[] getXYfromJSON(JsonObject object) {
+        return new int[]{object.get("x").getAsInt(), object.get("y").getAsInt()};
     }
 }
