@@ -13,7 +13,10 @@ userAction.mouseOut = function(e) {
 };
 
 userAction.click = function(e) {
-    if (TokenHandler.validate(e)) game.getConnection().place($(e).data('u'), $(e).data('v'))
+    if (TokenHandler.validate(e)) {
+        game.disableSelection();
+        game.getConnection().place($(e).data('u'), $(e).data('v'))
+    }
 };
 
 userAction.newBotGame = function() {
