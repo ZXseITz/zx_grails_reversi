@@ -5,17 +5,18 @@ function userAction() {
 }
 
 userAction.mouseOver = function(e) {
-    if (validateToken(e)) tokenEffects.fadeInToken(e, 'WHITE');
+    if (TokenHandler.validate(e)) TokenHandler.fadeInToken(e, game.getPlayerColor());
 };
 
 userAction.mouseOut = function(e) {
-    if (validateToken(e)) tokenEffects.fadeOutToken(e);
+    if (TokenHandler.validate(e)) TokenHandler.fadeOutToken(e);
 };
 
 userAction.click = function(e) {
-    if (validateToken(e)) connection.place($(e).data('u'), $(e).data('v'))
+    if (TokenHandler.validate(e)) game.getConnection().place($(e).data('u'), $(e).data('v'))
 };
 
-function validateToken(e) {
-    return $(e).data('selectable') === 1;
-}
+userAction.newBotGame = function() {
+    game.setUpUI();
+    game.getConnection().botGame();
+};
