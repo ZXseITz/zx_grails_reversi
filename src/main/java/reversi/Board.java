@@ -22,6 +22,7 @@ public class Board {
 
     public Board(BoardModel model) {
         this.model = model;
+        setUpBoard();
     }
 
     @FunctionalInterface
@@ -67,9 +68,9 @@ public class Board {
     }
 
     /**
-     * Setup the board, ready for a new game
+     * Setup the board, ready for a new Game
      */
-    public void setUpBoard(Token.Color client) {
+    private void setUpBoard() {
         iterateBoard((token, x, y) -> {
             token.setColor(Token.Color.UNDEFINED);
         });
@@ -77,8 +78,6 @@ public class Board {
         placeToken(4, 4, Token.Color.WHITE);
         placeToken(3, 4, Token.Color.BLACK);
         placeToken(4, 3, Token.Color.BLACK);
-//
-//        getSelectableTokens(Token.Color.WHITE).forEach(token -> token.setFade(client));
     }
 
     private void placeToken(int x, int y, Token.Color c) {
