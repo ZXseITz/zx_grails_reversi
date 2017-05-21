@@ -1,6 +1,11 @@
 package reversi;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import net.sf.ehcache.util.concurrent.ConcurrentHashMap;
+import org.grails.web.json.JSONElement;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
@@ -9,6 +14,7 @@ import javax.servlet.annotation.WebListener;
 import javax.websocket.*;
 import javax.websocket.server.ServerContainer;
 import javax.websocket.server.ServerEndpoint;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -17,7 +23,13 @@ import java.util.Map;
 @WebListener
 @ServerEndpoint("/reversi/room")
 public class ReversiServer implements ServletContextListener {
-    private final Map<String, Session> users = new ConcurrentHashMap<>();
+    private Map<String, Player> users;
+//    private Map<Integer, Round> rounds;
+
+    public ReversiServer() {
+        users = new ConcurrentHashMap<>();
+//        rounds = new ConcurrentHashMap<>();
+    }
 
     @Override
     public void contextInitialized(ServletContextEvent servletContextEvent) {
@@ -38,12 +50,16 @@ public class ReversiServer implements ServletContextListener {
 
     @OnOpen
     public void onOpen(Session client) {
-        users.putIfAbsent(client.getId(), client);
+        users.putIfAbsent(client.getId(), new Player(client));
+        System.out.println("Player " + client.getId() + " has joined");
     }
 
     @OnClose
     public void onClose(Session client) {
+//        Player p = users.get(client.getId());
+//        if (p.isInRound()) rounds.remove(p.getRound().getId());
         users.remove(client.getId());
+        System.out.println("Player " + client.getId() + " has left");
     }
 
     @OnError
@@ -53,6 +69,31 @@ public class ReversiServer implements ServletContextListener {
 
     @OnMessage
     public void onMessage(String message, Session client) {
+        try {
+//            System.out.println("Player " + client.getId() + " send:" + message);
+            JsonObject o = new JsonParser().parse(message).getAsJsonObject();
+            int type = o.get("type").getAsInt();
+            switch (type) {
+                case JSONMessage.CLIENT_NEW_BOT_GAME:
+                    Round r = new Round(users.get(client.getId()), new Board(new BoardModel()), Math.random() < 0.5? Token.Color.WHITE: Token.Color.BLACK);
+//                    rounds.putIfAbsent(r.getId(), r);
+                    users.get(client.getId()).setRound(r);
 
+                    List<Token> list = r.getBoard().getSelectableTokens(r.getPlayerColor());
+                    Token[] selectables = new Token[list.size()];
+                    String json = JSONHandler.buildJsonServerInit(r.getPlayerColor(), list.toArray(selectables));
+
+                    client.getBasicRemote().sendText(json);
+//                    System.out.println("send to Player " + client.getId() + " json " + json);
+                    break;
+                case JSONMessage.CLIENT_NEW_GAME:
+                    break;
+                case JSONMessage.CLIENT_PLACE:
+                    break;
+                case JSONMessage.CLIENT_PASS:
+                    break;
+            }
+        } catch (Exception e) {
+        }
     }
 }
