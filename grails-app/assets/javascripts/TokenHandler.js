@@ -16,7 +16,6 @@ TokenHandler.BLACK = {value: 2, name: "black"};
  * @param colorValue css class for preview
  */
 TokenHandler.fadeInToken = function(e, colorValue) {
-    // console.log("faded in");
     $(e).css("fill", TokenHandler.getColorFromValue(colorValue));
     $(e).css("opacity", "0.5");
     $(e).css("display", "none");
@@ -28,7 +27,6 @@ TokenHandler.fadeInToken = function(e, colorValue) {
  * @param e element to effect
  */
 TokenHandler.fadeOutToken = function (e) {
-    // console.log("faded out");
     $.when($(e).fadeOut(250)).then(function () {
         $(e).css("fill", TokenHandler.UNDEF.name);
         $(e).css("opacity", "1");
@@ -36,18 +34,19 @@ TokenHandler.fadeOutToken = function (e) {
     });
 };
 
-/**
- * Sets the color of source and changes the color of all targets
- * @param source
- * @param targets
- * @param c color
- */
-TokenHandler.place = function(source, targets, c) {
-
-};
-
 TokenHandler.setColor = function (e, colorValue) {
     $(e).css("fill", TokenHandler.getColorFromValue(colorValue));
+};
+
+TokenHandler.placeToken = function(e, colorValue) {
+    // console.log("faded in");
+    $(e).css("fill", TokenHandler.getColorFromValue(colorValue));
+    $(e).css("opacity", "1");
+    $(e).fadeIn(500);
+};
+
+TokenHandler.changeToken = function(e, colorValue) {
+    $(e).css({fill: TokenHandler.getColorFromValue(colorValue), transition: "0.5s"});
 };
 
 TokenHandler.setSelectable = function (e, s) {

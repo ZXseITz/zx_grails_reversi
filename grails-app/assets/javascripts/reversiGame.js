@@ -5,7 +5,6 @@
 function Game() {
     let connection = new Connection(this);
     let playerColor;
-    let selectableTokens;
 
     this.getConnection = function () {
         return connection;
@@ -17,7 +16,7 @@ function Game() {
 
     this.setUpUI = function () {
         var all = $(".TOKEN");
-        TokenHandler.setColor(all, TokenHandler.UNDEF);
+        TokenHandler.setColor(all, TokenHandler.UNDEF.value);
         TokenHandler.setSelectable(all, 0);
 
         TokenHandler.setColor($('#t33'), TokenHandler.WHITE.value);
@@ -29,16 +28,24 @@ function Game() {
     this.setUp = function (color, selectables) {
         playerColor = color;
         console.log("Color: " + color);
-        selectableTokens = [];
         selectables.forEach(function (item) {
             const id = TokenHandler.getTokenID(item['x'], item['y']);
             TokenHandler.setSelectable(id, 1);
-            selectableTokens.push(id)
         });
     };
 
-    this.place = function() {
+    this.place = function(color, source, changes) {
+        const sid = TokenHandler.getTokenID(source['x'], source['y']);
+        $.when(TokenHandler.placeToken(sid, color)).then(function () {
+            changes.forEach(function (item) {
+                const id = TokenHandler.getTokenID(item['x'], item['y']);
+                TokenHandler.changeToken(id, color);
+            });
+        });
+    };
 
+    this.disableSelection = function () {
+        TokenHandler.setSelectable($(".TOKEN"), 0);
     };
 
     this.pass = function () {

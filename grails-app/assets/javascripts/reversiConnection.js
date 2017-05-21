@@ -26,10 +26,10 @@ function Connection(game) {
             console.log(json);
             switch (json.type) {
                 case COM.SERVER_INIT:
-                    game.setUp(json.data["color"], json.data["selectables"]);
+                    game.setUp(json.data["color"], json.data["selection"]);
                     break;
-                case COM.SERVER_PLACE:
-                    game.place(json.data);
+                case COM.SERVER_PLACE_CLIENT:
+                    game.place(json.data["color"], json.data["source"], json.data["changes"]);
                     break;
                 case COM.SERVER_PASS:
                     game.pass(json.data);
