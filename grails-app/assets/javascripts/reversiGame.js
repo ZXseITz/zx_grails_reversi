@@ -15,9 +15,7 @@ function Game() {
     };
 
     this.setUpUI = function () {
-        var all = $(".TOKEN");
-        TokenHandler.setColor(all, TokenHandler.UNDEF.value);
-        TokenHandler.setSelectable(all, 0);
+        TokenHandler.resetToken($(".TOKEN"));
 
         TokenHandler.setColor($('#t33'), TokenHandler.WHITE.value);
         TokenHandler.setColor($('#t44'), TokenHandler.WHITE.value);
@@ -35,8 +33,7 @@ function Game() {
     };
 
     this.place = function(color, source, changes) {
-        const sid = TokenHandler.getTokenID(source['x'], source['y']);
-        $.when(TokenHandler.placeToken(sid, color)).then(function () {
+        $.when(TokenHandler.placeToken(TokenHandler.getTokenID(source['x'], source['y']), color)).then(function () {
             changes.forEach(function (item) {
                 const id = TokenHandler.getTokenID(item['x'], item['y']);
                 TokenHandler.changeToken(id, color);
