@@ -1,9 +1,9 @@
-package reversi;
+package reversi.json;
 
 /**
  * Created by Claudio on 16.05.2017.
  */
-abstract class JSONMessage {
+public abstract class JSONMessage {
     public static final int CLIENT_NEW_BOT_GAME = 0;
     public static final int CLIENT_NEW_GAME = 1;
     public static final int SERVER_INIT = 2;

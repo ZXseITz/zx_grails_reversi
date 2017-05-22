@@ -5,6 +5,9 @@ import com.google.gson.JsonParser;
 import net.sf.ehcache.util.concurrent.ConcurrentHashMap;
 import reversi.actions.PlacingAction;
 import reversi.actions.SelectionAction;
+import reversi.game.*;
+import reversi.json.JSONHandler;
+import reversi.json.JSONMessage;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;

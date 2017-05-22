@@ -1,4 +1,4 @@
-package reversi;
+package reversi.game;
 
 /**
  * Created by Claudio on 13.05.2017.

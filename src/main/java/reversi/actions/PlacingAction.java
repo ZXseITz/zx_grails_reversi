@@ -1,6 +1,6 @@
 package reversi.actions;
 
-import reversi.Token;
+import reversi.game.Token;
 
 /**
  * Created by Claudio on 21.05.2017.

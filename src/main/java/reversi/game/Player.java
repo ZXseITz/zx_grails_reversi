@@ -1,4 +1,4 @@
-package reversi;
+package reversi.game;
 
 import javax.websocket.Session;
 
