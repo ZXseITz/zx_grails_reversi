@@ -38,19 +38,25 @@ public abstract class JSONHandler {
 
     // server to client
 
-    public static String buildJsonSelection(SelectionAction action) {
+    public static String buildJsonSelection(Token.Color player, Token[] selection) {
         JsonObject data = new JsonObject();
-        data.addProperty("color", action.getPlayer().getValue());
-        data.add("selection", buildTokenArray(action.getSelection()));
+        data.addProperty("color", player.getValue());
+        data.add("selection", buildTokenArray(selection));
         return buildJson(JSONMessage.SERVER_INIT, data);
     }
     
-    public static String buildJSONPlace(PlacingAction action) {
+    public static String buildJSONPlace(Token.Color player, Token source, Token[] changes) {
         JsonObject data = new JsonObject();
-        data.addProperty("color", action.getPlayer().getValue());
-        data.add("source", buildToken(action.getSource()));
-        data.add("changes", buildTokenArray(action.getToChange()));
+        data.addProperty("color", player.getValue());
+        data.add("source", buildToken(source));
+        data.add("changes", buildTokenArray(changes));
         return buildJson(JSONMessage.SERVER_PLACE_CLIENT, data);
+    }
+
+    public static String buildJSONPass(Token.Color player) {
+        JsonObject data = new JsonObject();
+        data.addProperty("color", player.getValue());
+        return buildJson(JSONMessage.SERVER_PASS_CLIENT, data);
     }
 
     // client to server

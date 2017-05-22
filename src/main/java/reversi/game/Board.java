@@ -1,5 +1,9 @@
 package reversi.game;
 
+import reversi.actions.Action;
+import reversi.actions.PassAction;
+import reversi.actions.PlacingAction;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -8,15 +12,15 @@ import java.util.List;
  * Created by Claudio on 14.02.2017.
  */
 public class Board {
-    private static final int[][] loopVars = new int[][]{
-            {0, -1},
-            {1, -1},
-            {1, 0},
-            {1, 1},
-            {0, 1},
-            {-1, 1},
-            {-1, 0},
-            {-1, -1},
+    private static final int[][] loopVars = new int[][] {
+            { 0, -1 },
+            { 1, -1 },
+            { 1, 0 },
+            { 1, 1 },
+            { 0, 1 },
+            { -1, 1 },
+            { -1, 0 },
+            { -1, -1 }
     };
 
     private BoardModel model;
@@ -26,26 +30,27 @@ public class Board {
         setUpBoard();
     }
 
-    @FunctionalInterface
-    public interface ItBoard {
+    @FunctionalInterface public interface ItBoard {
         void apply(Token token, Integer x, Integer y);
     }
 
     public void iterateBoard(ItBoard function) {
-        for(int y = 0; y < 8; y++) {
+        for (int y = 0; y < 8; y++) {
             for (int x = 0; x < 8; x++) {
                 function.apply(get(x, y), x, y);
             }
         }
     }
 
-    protected void inc() {
+    private void inc() {
         model.finished = ++model.placedTokens == 64;
     }
 
-    protected void swapCurrentPlayer() {
-        if (model.currentPlayer == Token.Color.WHITE) model.currentPlayer = Token.Color.BLACK;
-        else model.currentPlayer = Token.Color.WHITE;
+    private void swapCurrentPlayer() {
+        if (model.currentPlayer == Token.Color.WHITE)
+            model.currentPlayer = Token.Color.BLACK;
+        else
+            model.currentPlayer = Token.Color.WHITE;
     }
 
     public Token get(int x, int y) {
@@ -60,7 +65,7 @@ public class Board {
         return model.prevPassed;
     }
 
-    protected void setPrevPassed(boolean prevPassed) {
+    private void setPrevPassed(boolean prevPassed) {
         model.prevPassed = prevPassed;
     }
 
@@ -88,12 +93,13 @@ public class Board {
 
     /**
      * Returns a list of tokens which are valid tokens to be set by the player with color c
+     *
      * @param c color of player
      * @return List of all selectable tokens
      */
     public List<Token> getSelectableTokens(Token.Color c) {
         List<Token> selectables = new ArrayList<>(20);
-        if (!model.finished) {
+        if (!isFinished() && c == getCurrentPlayer()) {
             iterateBoard((token, x, y) -> {
                 if (!token.isPlaced() && validatePlacing(token, c)) {
                     selectables.add(token);
@@ -105,6 +111,7 @@ public class Board {
 
     /**
      * Validates the placing turn
+     *
      * @param source token to place
      * @param player player on turn
      * @return validation
@@ -132,6 +139,17 @@ public class Board {
         return valid;
     }
 
+    private boolean validatePassing(Token.Color player) {
+        for (int y = 0; y < 8; y++) {
+            for (int x = 0; x < 8; x++) {
+                Token token = get(x, y);
+                if (!token.isPlaced() && validatePlacing(token, player))
+                    return false;
+            }
+        }
+        return true;
+    }
+
     public List<Token> detectNeighbours(Token source, Token.Color player) {
         List<Token> tokenToChange = new ArrayList<>(20);
         Token[] tokenLine = new Token[6];
@@ -155,8 +173,30 @@ public class Board {
     /**
      * Checks and executes the incoming action
      */
-    public void submit() {
-        //TODO
+    public boolean submit(Action a) {
+        if (a instanceof PlacingAction) {
+            PlacingAction p = (PlacingAction) a;
+            if (!isFinished() && p.getPlayer() == getCurrentPlayer()) {
+                List<Token> list = detectNeighbours(p.getSource(), p.getPlayer());
+                if (list.size() > 0) {
+                    p.getSource().setColor(p.getPlayer());
+                    for (Token t : list)
+                        t.setColor(p.getPlayer());
+                    swapCurrentPlayer();
+                    setPrevPassed(false);
+                    inc();
+                    return true;
+                }
+            }
+        } else if (a instanceof PassAction) {
+            PassAction p = (PassAction) a;
+            if (!isFinished() && p.getPlayer() == getCurrentPlayer() && validatePassing(p.getPlayer())) {
+                swapCurrentPlayer();
+                setPrevPassed(true);
+                return true;
+            }
+        }
+        return false;
     }
 
     public Board clone() {

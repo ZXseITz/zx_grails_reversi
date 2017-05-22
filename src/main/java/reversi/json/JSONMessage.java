@@ -13,7 +13,8 @@ public abstract class JSONMessage {
     public static final int SERVER_PLACE_OPPONENT = 12;
 
     public static final int CLIENT_PASS = 20;
-    public static final int SERVER_PASS = 21;
+    public static final int SERVER_PASS_CLIENT = 21;
+    public static final int SERVER_PASS_OPPONENT = 22;
 
     public static final int SERVER_VICTORY = 50;
     public static final int SERVER_DEFEAT = 51;

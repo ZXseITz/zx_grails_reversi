@@ -31,12 +31,10 @@ public class Token {
     }
 
     private Color color;
-    private byte selectable;
     private final int u, v;
 
     public Token(int u, int v) {
         this.color = Color.UNDEFINED;
-        this.selectable = 0;
         this.u = u;
         this.v = v;
     }
@@ -47,7 +45,6 @@ public class Token {
      */
     private Token(Token token) {
         this.color = token.color;
-        this.selectable = token.selectable;
         this.u = token.u;
         this.v = token.v;
     }
@@ -68,14 +65,6 @@ public class Token {
 
     public void setColor(Color color) {
         this.color = color;
-    }
-
-    public byte isSelectable() {
-        return selectable;
-    }
-
-    public void setSelectable(byte selectable) {
-        this.selectable = selectable;
     }
 
     public int getU() {

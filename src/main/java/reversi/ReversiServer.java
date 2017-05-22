@@ -3,6 +3,7 @@ package reversi;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import net.sf.ehcache.util.concurrent.ConcurrentHashMap;
+import reversi.actions.PassAction;
 import reversi.actions.PlacingAction;
 import reversi.actions.SelectionAction;
 import reversi.game.*;
@@ -85,8 +86,7 @@ public class ReversiServer implements ServletContextListener {
                         List<Token> list = r.getBoard().getSelectableTokens(r.getPlayerColor());
                         Token[] selection = new Token[list.size()];
                         list.toArray(selection);
-                        SelectionAction action = new SelectionAction(r.getPlayerColor(), selection);
-                        String json = JSONHandler.buildJsonSelection(action);
+                        String json = JSONHandler.buildJsonSelection(r.getPlayerColor(), selection);
                         client.getBasicRemote().sendText(json);
                     }
 
@@ -103,12 +103,12 @@ public class ReversiServer implements ServletContextListener {
                         Board board = r.getBoard();
                         int[] xy = JSONHandler.getXYfromJSON(o.getAsJsonObject("data"));
                         Token source = board.get(xy[0], xy[1]);
-                        List<Token> toChange = board.detectNeighbours(source, r.getPlayerColor());
-                        if (toChange.size() > 0) {
-                            Token[] changes = new Token[toChange.size()];
-                            toChange.toArray(changes);
-                            PlacingAction action = new PlacingAction(r.getPlayerColor(), source, changes);
-                            String json = JSONHandler.buildJSONPlace(action);
+                        PlacingAction a = new PlacingAction(r.getPlayerColor(), source);
+                        if (r.getBoard().submit(a)) {
+                            List<Token> list = board.detectNeighbours(source, r.getPlayerColor());
+                            Token[] changes = new Token[list.size()];
+                            list.toArray(changes);
+                            String json = JSONHandler.buildJSONPlace(r.getPlayerColor(), source, changes);
                             p.send(json);
 
                             //TODO send action to bot
@@ -117,7 +117,18 @@ public class ReversiServer implements ServletContextListener {
                     break;
                 }
                 case JSONMessage.CLIENT_PASS:
+                    Player p = users.get(client.getId());
+                    if (p.isInRound()) {
+                        Round r = p.getRound();
+                        Board board = r.getBoard();
+                        PassAction a = new PassAction(r.getPlayerColor());
+                        if (r.getBoard().submit(a)) {
+                            String json = JSONHandler.buildJSONPass(r.getPlayerColor());
+                            p.send(json);
 
+                            //TODO send action to bot
+                        }
+                    }
                     break;
             }
         } catch (Exception e) {

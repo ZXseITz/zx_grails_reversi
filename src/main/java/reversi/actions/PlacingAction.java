@@ -6,20 +6,12 @@ import reversi.game.Token;
  * Created by Claudio on 21.05.2017.
  */
 public class PlacingAction extends Action {
-    private Token.Color player;
-    private Token source;
-    private Token[] toChange;
+    private final Token.Color player;
+    private final Token source;
 
-    public PlacingAction(Token.Color player, Token source, Token[] toChange) {
+    public PlacingAction(Token.Color player, Token source) {
         this.player = player;
         this.source = source;
-        this.toChange = toChange;
-    }
-
-    private PlacingAction(PlacingAction action) {
-        this.player = action.player;
-        this.source = action.source;
-        this.toChange = action.toChange.clone();
     }
 
     public Token.Color getPlayer() {
@@ -28,13 +20,5 @@ public class PlacingAction extends Action {
 
     public Token getSource() {
         return source;
-    }
-
-    public Token[] getToChange() {
-        return toChange;
-    }
-
-    public PlacingAction clone() {
-        return new PlacingAction(this);
     }
 }
