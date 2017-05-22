@@ -5,7 +5,7 @@ import reversi.game.Token;
 /**
  * Created by Claudio on 21.05.2017.
  */
-public class PlacingAction {
+public class PlacingAction extends Action {
     private Token.Color player;
     private Token source;
     private Token[] toChange;
