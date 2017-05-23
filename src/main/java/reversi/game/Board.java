@@ -66,6 +66,7 @@ public class Board {
     }
 
     private void setPrevPassed(boolean prevPassed) {
+        if (model.prevPassed && prevPassed) model.finished = true;
         model.prevPassed = prevPassed;
     }
 
@@ -168,6 +169,46 @@ public class Board {
             }
         }
         return tokenToChange;
+    }
+
+    public int winner(Token.Color c) {
+        int w = winner();
+        if (w == 0) return 0;
+        else {
+            if ((c == Token.Color.WHITE && w > 0) || (c == Token.Color.BLACK && w < 0)) return 1;
+            else return -1;
+        }
+    }
+
+    public int winner() {
+        if (!isFinished()) throw new UnsupportedOperationException("Game is still running");
+        int[] array = countPlacedTokens();
+        return array[0] - array[1];
+    }
+
+    public int[] countPlacedTokens() {
+        int[] array = new int[2];
+        array[0] = 0;
+        array[1] = 0;
+        iterateBoard((token, x, y) -> {
+            if (token.isWhite()) array[0] += 1;
+            else if (token.isBlack()) array[1] += 1;
+        });
+        return array;
+    }
+
+    public List<Action> getPossibleActions(Token.Color c) {
+        List<Action> actions = new ArrayList<>(30);
+        if (!isFinished()) {
+            iterateBoard((token, x, y) -> {
+                if (!token.isPlaced() && validatePlacing(token, c)) {
+                    actions.add(new PlacingAction(c, token));
+                }
+            });
+            if (actions.isEmpty()) actions.add(new PassAction(c));
+            return actions;
+        }
+        return null;
     }
 
     /**
