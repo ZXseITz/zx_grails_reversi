@@ -2,6 +2,8 @@ package reversi.actions;
 
 import reversi.game.Token;
 
+import java.util.Arrays;
+
 /**
  * Created by Claudio on 23.05.2017.
  */
@@ -21,5 +23,10 @@ public class ChangedAction extends Action {
 
     public Token[] getNeighbours() {
         return neighbours;
+    }
+
+    @Override
+    public String toString() {
+        return "Changed source: " + source + ", neighbours: " + Token.arrayToString(neighbours);
     }
 }

@@ -30,6 +30,17 @@ public class Token {
         else return Color.UNDEFINED;
     }
 
+    public static String arrayToString(Token[] tokens) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("[ ");
+        if (tokens.length > 0) {
+            sb.append(tokens[0]);
+            for (int i = 1; i < tokens.length; i++) sb.append(", ").append(tokens[i]);
+        }
+        sb.append(" ]");
+        return sb.toString();
+    }
+
     private Color color;
     private final int u, v;
 

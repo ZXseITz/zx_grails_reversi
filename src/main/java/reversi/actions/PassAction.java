@@ -9,4 +9,9 @@ public class PassAction extends Action {
     public PassAction(Token.Color player) {
         super(player);
     }
+
+    @Override
+    public String toString() {
+        return "Passed " + getPlayer();
+    }
 }

@@ -16,4 +16,9 @@ public class SelectionAction extends Action {
     public Token[] getSelection() {
         return selection;
     }
+
+    @Override
+    public String toString() {
+        return "Changed color: " + getPlayer() + ", selection: " + Token.arrayToString(selection);
+    }
 }

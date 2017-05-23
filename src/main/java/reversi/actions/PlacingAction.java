@@ -21,4 +21,9 @@ public class PlacingAction extends Action {
     public int getY() {
         return y;
     }
+
+    @Override
+    public String toString() {
+        return "Placed source: " + x + ", " + y + ", " + getPlayer();
+    }
 }

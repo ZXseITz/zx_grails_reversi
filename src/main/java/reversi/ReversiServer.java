@@ -113,7 +113,8 @@ public class ReversiServer implements ServletContextListener {
                         PlacingAction a = new PlacingAction(r.getPlayerColor(), xy[0], xy[1]);
                         ChangedAction changed = board.submit(a);
                         if (changed != null) {
-                            String json = JSONHandler.buildJSONPlace(changed.getPlayer(), changed.getSource(), changed.getNeighbours());
+                            String json = JSONHandler.buildJSONPlaceClient(changed.getPlayer(), changed.getSource(),
+                                    changed.getNeighbours());
                             p.send(json);
 
                             respond(r);
@@ -129,7 +130,7 @@ public class ReversiServer implements ServletContextListener {
                         PassAction a = new PassAction(r.getPlayerColor());
                         ChangedAction changed = board.submit(a);
                         if (changed != null) {
-                            String json = JSONHandler.buildJSONPass(r.getPlayerColor());
+                            String json = JSONHandler.buildJSONPassClient(r.getPlayerColor());
                             p.send(json);
 
                             respond(r);
@@ -166,7 +167,8 @@ public class ReversiServer implements ServletContextListener {
                 List<Token> list = r.getBoard().getSelectableTokens(r.getPlayerColor());
                 Token[] selection = new Token[list.size()];
                 list.toArray(selection);
-                String json = JSONHandler.buildJSONPlaceSelect(changed.getPlayer(), changed.getSource(), changed.getNeighbours(), selection);
+                String json = JSONHandler.buildJSONPlaceOpponent(changed.getPlayer(), changed.getSource(),
+                        changed.getNeighbours(), selection, !board.isFinished() ? -2 : board.winner(r.getPlayerColor()));
                 r.getPlayer().send(json);
             }
         } else if (action instanceof PassAction) {
@@ -175,7 +177,8 @@ public class ReversiServer implements ServletContextListener {
                 List<Token> list = r.getBoard().getSelectableTokens(r.getPlayerColor());
                 Token[] selection = new Token[list.size()];
                 list.toArray(selection);
-                String json = JSONHandler.buildJSONPassSelect(changed.getPlayer(), selection);
+                String json = JSONHandler.buildJSONPassOpponent(changed.getPlayer(), selection,
+                        !board.isFinished() ? -2 : board.winner(r.getPlayerColor()));
                 r.getPlayer().send(json);
             }
         }

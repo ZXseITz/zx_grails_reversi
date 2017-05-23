@@ -57,6 +57,6 @@ function Game() {
     };
 
     this.end = function (win) {
-        alert(win > 0 ? "Victory" : (win < 0 ? "Defeat" : "Remis"));
+        if (win > -2) alert(win > 0 ? "Victory" : (win < 0 ? "Defeat" : "Remis"));
     };
 }
