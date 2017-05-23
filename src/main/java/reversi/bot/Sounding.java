@@ -33,7 +33,7 @@ public class Sounding implements Callable<ActionRating> {
             if (!board.isFinished()) {
                 int s = soundings / nPackages;
                 SoundingPackage[] packages = new SoundingPackage[nPackages];
-                for (int i = 0; i < s; i++) {
+                for (int i = 0; i < nPackages; i++) {
                     packages[i] = new SoundingPackage(board, action, s);
                 }
                 List<Future<Integer>> results = executor.invokeAll(Arrays.asList(packages));

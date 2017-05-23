@@ -25,12 +25,15 @@ function Game() {
 
     this.setUp = function (color, selectables) {
         playerColor = color;
-        console.log("Color: " + color);
+        this.setSelectable(selectables);
+    };
+
+    this.setSelectable = function(selectables) {
         selectables.forEach(function (item) {
             const id = TokenHandler.getTokenID(item['x'], item['y']);
             TokenHandler.setSelectable(id, 1);
         });
-    };
+    }
 
     this.place = function(color, source, changes) {
         $.when(TokenHandler.placeToken(TokenHandler.getTokenID(source['x'], source['y']), color)).then(function () {

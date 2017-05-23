@@ -147,7 +147,7 @@ public class Board {
 
     public List<Token> detectNeighbours(Token source, Token.Color player) {
         List<Token> tokenToChange = new ArrayList<>(20);
-        Token[] tokenLine = new Token[6];
+        Token[] tokenLine = new Token[8];
         for (int[] loopVar : loopVars) {
             int tx = source.getU();
             int ty = source.getV();
