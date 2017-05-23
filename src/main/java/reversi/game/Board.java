@@ -1,8 +1,6 @@
 package reversi.game;
 
-import reversi.actions.Action;
-import reversi.actions.PassAction;
-import reversi.actions.PlacingAction;
+import reversi.actions.*;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -81,17 +79,11 @@ public class Board {
         iterateBoard((token, x, y) -> {
             token.setColor(Token.Color.UNDEFINED);
         });
-        placeToken(3, 3, Token.Color.WHITE);
-        placeToken(4, 4, Token.Color.WHITE);
-        placeToken(3, 4, Token.Color.BLACK);
-        placeToken(4, 3, Token.Color.BLACK);
+        get(3, 3).setColor(Token.Color.WHITE);
+        get(4, 4).setColor(Token.Color.WHITE);
+        get(3, 4).setColor(Token.Color.BLACK);
+        get(4, 3).setColor(Token.Color.BLACK);
         model.placedTokens = 4;
-
-    }
-
-    private void placeToken(int x, int y, Token.Color c) {
-        Token t = get(x, y);
-        t.setColor(c);
     }
 
     /**
@@ -120,26 +112,22 @@ public class Board {
      * @return validation
      */
     private boolean validatePlacing(Token source, Token.Color player) {
-        boolean valid = false;
-        boolean validDir = false;
         boolean inBoard = false;
-        int i = 0, n, tx, ty;
+        int n, tx, ty;
 
-        do {
+        for (int[] loopVar : loopVars) {
             tx = source.getU();
             ty = source.getV();
             n = 0;
             do {
-                tx += loopVars[i][0];
-                ty += loopVars[i][1];
+                tx += loopVar[0];
+                ty += loopVar[1];
                 n++;
                 inBoard = tx >= 0 && tx < 8 && ty >= 0 && ty < 8;
             } while (inBoard && get(tx, ty).getColor() == Token.getOpposite(player));
-            i++;
-            validDir = inBoard && get(tx, ty).getColor() == player && n > 1;
-            valid = i < loopVars.length;
-        } while (!validDir && valid);
-        return valid;
+            if(inBoard && get(tx, ty).getColor() == player && n > 1) return true;
+        }
+        return false;
     }
 
     private boolean validatePassing(Token.Color player) {
@@ -155,7 +143,7 @@ public class Board {
 
     public List<Token> detectNeighbours(Token source, Token.Color player) {
         List<Token> tokenToChange = new ArrayList<>(20);
-        Token[] tokenLine = new Token[6];
+        Token[] tokenLine = new Token[8];
         for (int[] loopVar : loopVars) {
             int tx = source.getU();
             int ty = source.getV();
@@ -204,7 +192,7 @@ public class Board {
         if (!isFinished()) {
             iterateBoard((token, x, y) -> {
                 if (!token.isPlaced() && validatePlacing(token, c)) {
-                    actions.add(new PlacingAction(c, token));
+                    actions.add(new PlacingAction(c, token.getU(), token.getV()));
                 }
             });
             if (actions.isEmpty()) actions.add(new PassAction(c));
@@ -216,20 +204,22 @@ public class Board {
     /**
      * Checks and executes the incoming action
      */
-    public boolean submit(Action a) {
+    public ChangedAction submit(Action a) {
         if (a instanceof PlacingAction) {
             PlacingAction p = (PlacingAction) a;
             if (!isFinished() && p.getPlayer() == getCurrentPlayer()) {
-                Token source = get(p.getSource().getU(), p.getSource().getV());
-                List<Token> list = detectNeighbours(p.getSource(), p.getPlayer());
-                if (list.size() > 0) {
+                Token source = get(p.getX(), p.getY());
+                List<Token> neighbours = detectNeighbours(source, p.getPlayer());
+                Token[] neighboursArray = new Token[neighbours.size()];
+                neighbours.toArray(neighboursArray);
+                if (neighbours.size() > 0) {
                     source.setColor(p.getPlayer());
-                    for (Token t : list)
+                    for (Token t : neighbours)
                         t.setColor(p.getPlayer());
                     swapCurrentPlayer();
                     setPrevPassed(false);
                     inc();
-                    return true;
+                    return new ChangedAction(p.getPlayer(), source, neighboursArray);
                 }
             }
         } else if (a instanceof PassAction) {
@@ -237,10 +227,10 @@ public class Board {
             if (!isFinished() && p.getPlayer() == getCurrentPlayer() && validatePassing(p.getPlayer())) {
                 swapCurrentPlayer();
                 setPrevPassed(true);
-                return true;
+                return new ChangedAction(p.getPlayer(), null, null);
             }
         }
-        return false;
+        return null;
     }
 
     public Board clone() {

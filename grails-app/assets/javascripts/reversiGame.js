@@ -25,11 +25,18 @@ function Game() {
 
     this.setUp = function (color, selectables) {
         playerColor = color;
-        console.log("Color: " + color);
-        selectables.forEach(function (item) {
-            const id = TokenHandler.getTokenID(item['x'], item['y']);
-            TokenHandler.setSelectable(id, 1);
-        });
+        this.setSelectable(selectables);
+    };
+
+    this.setSelectable = function(selectables) {
+        if (selectables.length > 0) {
+            selectables.forEach(function (item) {
+                const id = TokenHandler.getTokenID(item['x'], item['y']);
+                TokenHandler.setSelectable(id, 1);
+            });
+        } else {
+            connection.pass();
+        }
     };
 
     this.place = function(color, source, changes) {
@@ -45,11 +52,11 @@ function Game() {
         TokenHandler.setSelectable($(".TOKEN"), 0);
     };
 
-    this.pass = function () {
-
+    this.pass = function (color) {
+        alert(`${color === 1 ? "White" : "Black"} has passed`);
     };
 
-    this.end = function () {
-
+    this.end = function (win) {
+        alert(win > 0 ? "Victory" : (win < 0 ? "Defeat" : "Remis"));
     };
 }

@@ -31,11 +31,19 @@ function Connection(game) {
                 case COM.SERVER_PLACE_CLIENT:
                     game.place(json.data["color"], json.data["source"], json.data["changes"]);
                     break;
-                case COM.SERVER_PASS:
-                    game.pass(json.data);
+                case COM.SERVER_PLACE_OPPONENT:
+                    game.place(json.data["color"], json.data["source"], json.data["changes"]);
+                    game.setSelectable(json.data["selection"]);
+                    break;
+                case COM.SERVER_PASS_CLIENT:
+                    game.pass(json.data["color"]);
+                    break;
+                case COM.SERVER_PASS_OPPONENT:
+                    game.pass(json.data["color"]);
+                    game.setSelectable(json.data["selection"]);
                     break;
                 case COM.SERVER_END:
-                    game.end(json.data);
+                    game.end(json.data["win"]);
                     break;
             }
         };
