@@ -53,6 +53,15 @@ public abstract class JSONHandler {
         return buildJson(JSONMessage.SERVER_PLACE_CLIENT, data);
     }
 
+    public static String buildJSONPlaceSelect(Token.Color player, Token source, Token[] changes, Token[] selection) {
+        JsonObject data = new JsonObject();
+        data.addProperty("color", player.getValue());
+        data.add("source", buildToken(source));
+        data.add("changes", buildTokenArray(changes));
+        data.add("selection", buildTokenArray(selection));
+        return buildJson(JSONMessage.SERVER_PLACE_OPPONENT, data);
+    }
+
     public static String buildJSONPass(Token.Color player) {
         JsonObject data = new JsonObject();
         data.addProperty("color", player.getValue());

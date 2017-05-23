@@ -16,6 +16,7 @@ public class BoardModel {
                 tokens[i][j] = new Token(j, i);
             }
         }
+        currentPlayer = Token.Color.WHITE;
         placedTokens = 0;
         prevPassed = false;
         finished = false;
@@ -31,6 +32,7 @@ public class BoardModel {
                 this.tokens[i][j] = boardModel.get(j, i).clone();
             }
         }
+        currentPlayer = boardModel.currentPlayer;
         placedTokens = boardModel.placedTokens;
         prevPassed = boardModel.prevPassed;
         finished = boardModel.finished;

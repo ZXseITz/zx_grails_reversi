@@ -27,10 +27,10 @@ public class Board {
 
     public Board(BoardModel model) {
         this.model = model;
-        setUpBoard();
     }
 
-    @FunctionalInterface public interface ItBoard {
+    @FunctionalInterface
+    public interface ItBoard {
         void apply(Token token, Integer x, Integer y);
     }
 
@@ -77,7 +77,7 @@ public class Board {
     /**
      * Setup the board, ready for a new Game
      */
-    private void setUpBoard() {
+    public void setUpBoard() {
         iterateBoard((token, x, y) -> {
             token.setColor(Token.Color.UNDEFINED);
         });
@@ -85,6 +85,8 @@ public class Board {
         placeToken(4, 4, Token.Color.WHITE);
         placeToken(3, 4, Token.Color.BLACK);
         placeToken(4, 3, Token.Color.BLACK);
+        model.placedTokens = 4;
+
     }
 
     private void placeToken(int x, int y, Token.Color c) {
@@ -218,9 +220,10 @@ public class Board {
         if (a instanceof PlacingAction) {
             PlacingAction p = (PlacingAction) a;
             if (!isFinished() && p.getPlayer() == getCurrentPlayer()) {
+                Token source = get(p.getSource().getU(), p.getSource().getV());
                 List<Token> list = detectNeighbours(p.getSource(), p.getPlayer());
                 if (list.size() > 0) {
-                    p.getSource().setColor(p.getPlayer());
+                    source.setColor(p.getPlayer());
                     for (Token t : list)
                         t.setColor(p.getPlayer());
                     swapCurrentPlayer();
@@ -250,7 +253,7 @@ public class Board {
         for (int y = 0; y < 8; y++) {
             for (int x = 0; x < 8; x++) {
                 Token t = get(x, y);
-                sb.append(t.isPlaced() ? (t.isWhite() ? "W" : "B") : "U" + "  ");
+                sb.append(t.isPlaced() ? (t.isWhite() ? "W " : "B ") : "U ");
             }
             sb.append("\n");
         }
