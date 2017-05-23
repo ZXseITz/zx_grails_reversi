@@ -29,6 +29,7 @@ public class SoundingPackage implements Callable<Integer> {
         for (int i = 0; i < soundings; i++) {
             sounding(board.clone());
         }
+//        System.out.println(this);
         return victories;
     }
 
@@ -40,7 +41,12 @@ public class SoundingPackage implements Callable<Integer> {
             board.submit(rndAction);
         }
         int win = board.winner(action.getPlayer());
-        if (win < 0) victories++; //bot wins
-        else if (win > 0) victories--; //bot loses
+        if (win > 0) victories++; //bot wins
+        else if (win < 0) victories--; //bot loses
+    }
+
+    @Override
+    public String toString() {
+        return "Sounding package action: " + action + ", victories: " + victories;
     }
 }

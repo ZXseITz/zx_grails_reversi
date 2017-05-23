@@ -24,6 +24,7 @@ public class Sounding implements Callable<ActionRating> {
         this.board = board;
         this.action = action;
         this.soundings = soundings;
+        this.victories = 0;
     }
 
     @Override
@@ -42,13 +43,18 @@ public class Sounding implements Callable<ActionRating> {
                 }
             } else {
                 int win = board.winner(action.getPlayer());
-                if (win < 0) victories = Integer.MAX_VALUE; //bot wins
-                else if (win > 0) victories = Integer.MIN_VALUE; //bot loses
+                if (win > 0) victories = Integer.MAX_VALUE; //bot wins
+                else if (win < 0) victories = Integer.MIN_VALUE; //bot loses
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
         return new ActionRating(action, victories);
+    }
+
+    @Override
+    public String toString() {
+        return "Sounding action: " + action + ", victories: " + victories;
     }
 }
 
