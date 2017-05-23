@@ -43,7 +43,7 @@ function Connection(game) {
                     game.setSelectable(json.data["selection"]);
                     break;
                 case COM.SERVER_END:
-                    game.end(json.data);
+                    game.end(json.data["win"]);
                     break;
             }
         };

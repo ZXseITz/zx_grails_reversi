@@ -73,6 +73,12 @@ public abstract class JSONHandler {
         return buildJson(JSONMessage.SERVER_PASS_OPPONENT, data);
     }
 
+    public static String buildJSONEnd(int win) {
+        JsonObject data = new JsonObject();
+        data.addProperty("win", win);
+        return buildJson(JSONMessage.SERVER_END, data);
+    }
+
     // client to server
 
     public static int[] getXYfromJSON(JsonObject object) {

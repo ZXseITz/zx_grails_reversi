@@ -145,7 +145,9 @@ public class ReversiServer implements ServletContextListener {
     private void respond(Round r) {
         Board board = r.getBoard();
         if (board.isFinished()) {
-            //todo send end data
+            int win = board.winner(r.getPlayerColor());
+            String json = JSONHandler.buildJSONEnd(win);
+            r.getPlayer().send(json);
         } else {
             try {
                 Future<Action> reaction = r.getBot().submit(board);
