@@ -4,6 +4,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import net.sf.ehcache.util.concurrent.ConcurrentHashMap;
 import reversi.actions.Action;
+import reversi.actions.ChangedAction;
 import reversi.actions.PassAction;
 import reversi.actions.PlacingAction;
 import reversi.bot.Bot;
@@ -109,23 +110,13 @@ public class ReversiServer implements ServletContextListener {
                         Round r = p.getRound();
                         Board board = r.getBoard();
                         int[] xy = JSONHandler.getXYfromJSON(o.getAsJsonObject("data"));
-                        Token source = board.get(xy[0], xy[1]);
-                        List<Token> list = board.detectNeighbours(source, r.getPlayerColor());
-                        PlacingAction a = new PlacingAction(r.getPlayerColor(), source);
-                        if (r.getBoard().submit(a)) {
-                            Token[] changes = new Token[list.size()];
-                            list.toArray(changes);
-                            String json = JSONHandler.buildJSONPlace(r.getPlayerColor(), source, changes);
+                        PlacingAction a = new PlacingAction(r.getPlayerColor(), xy[0], xy[1]);
+                        ChangedAction changed = board.submit(a);
+                        if (changed != null) {
+                            String json = JSONHandler.buildJSONPlace(changed.getPlayer(), changed.getSource(), changed.getNeighbours());
                             p.send(json);
 
-
-                            if (board.isFinished()) {
-                                //todo send end data
-                            } else {
-                                Bot bot = r.getBot();
-                                Future<Action> reaction = bot.submit(board);
-                                botAction(reaction.get(), board);
-                            }
+                            respond(r);
                         }
                     }
                     break;
@@ -136,30 +127,55 @@ public class ReversiServer implements ServletContextListener {
                         Round r = p.getRound();
                         Board board = r.getBoard();
                         PassAction a = new PassAction(r.getPlayerColor());
-                        if (r.getBoard().submit(a)) {
+                        ChangedAction changed = board.submit(a);
+                        if (changed != null) {
                             String json = JSONHandler.buildJSONPass(r.getPlayerColor());
                             p.send(json);
 
-                            if (board.isFinished()) {
-                                //todo send end data
-                            } else {
-                                //TODO send action to bot
-                            }
+                            respond(r);
                         }
                     }
                     break;
             }
         } catch (Exception e) {
+
         }
     }
 
-    private void botAction (Action action, Board board) {
+    private void respond(Round r) {
+        Board board = r.getBoard();
+        if (board.isFinished()) {
+            //todo send end data
+        } else {
+            try {
+                Future<Action> reaction = r.getBot().submit(board);
+                botAction(reaction.get(), r);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private void botAction (Action action, Round r) {
+        Board board = r.getBoard();
         if (action instanceof PlacingAction) {
-            PlacingAction a = (PlacingAction) action;
-
+            ChangedAction changed = board.submit(action);
+            if (changed != null) {
+                List<Token> list = r.getBoard().getSelectableTokens(r.getPlayerColor());
+                Token[] selection = new Token[list.size()];
+                list.toArray(selection);
+                String json = JSONHandler.buildJSONPlaceSelect(changed.getPlayer(), changed.getSource(), changed.getNeighbours(), selection);
+                r.getPlayer().send(json);
+            }
         } else if (action instanceof PassAction) {
-            PassAction a = (PassAction) action;
-
+            ChangedAction changed = board.submit(action);
+            if (changed != null) {
+                List<Token> list = r.getBoard().getSelectableTokens(r.getPlayerColor());
+                Token[] selection = new Token[list.size()];
+                list.toArray(selection);
+                String json = JSONHandler.buildJSONPassSelect(changed.getPlayer(), selection);
+                r.getPlayer().send(json);
+            }
         }
     }
 }

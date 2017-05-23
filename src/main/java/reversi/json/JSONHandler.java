@@ -5,8 +5,6 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import reversi.game.Token;
-import reversi.actions.PlacingAction;
-import reversi.actions.SelectionAction;
 
 /**
  * Created by Claudio on 21.05.2017.
@@ -66,6 +64,13 @@ public abstract class JSONHandler {
         JsonObject data = new JsonObject();
         data.addProperty("color", player.getValue());
         return buildJson(JSONMessage.SERVER_PASS_CLIENT, data);
+    }
+
+    public static String buildJSONPassSelect(Token.Color player, Token[] selection) {
+        JsonObject data = new JsonObject();
+        data.addProperty("color", player.getValue());
+        data.add("selection", buildTokenArray(selection));
+        return buildJson(JSONMessage.SERVER_PASS_OPPONENT, data);
     }
 
     // client to server
