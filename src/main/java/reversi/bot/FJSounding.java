@@ -16,14 +16,13 @@ public class FJSounding extends RecursiveTask<Integer> {
     private int soundings;
     private int victories;
     private Action action;
-    private List<Action> actions, rndActions;
+    private List<Action> rndActions;
     private Board board;
 
-    public FJSounding(Board board, Action action, List<Action> actions, int soundings) {
+    public FJSounding(Board board, Action action, int soundings) {
         this.rndActions = new ArrayList<>();
         this.board = board;
         this.action = action;
-        this.actions = actions;
         this.soundings = soundings;
     }
 
@@ -31,8 +30,8 @@ public class FJSounding extends RecursiveTask<Integer> {
     protected Integer compute() {
         if (soundings > 1000) {
             int n = soundings / 2;
-            FJSounding left = new FJSounding(board, action, actions, n);
-            FJSounding right = new FJSounding(board, action, actions, n);
+            FJSounding left = new FJSounding(board, action, n);
+            FJSounding right = new FJSounding(board, action, n);
             left.fork();
             right.invoke();
             left.join();
@@ -46,21 +45,15 @@ public class FJSounding extends RecursiveTask<Integer> {
     }
 
     private void sounding(Board board) {
-        rndActions.clear();
-        rndActions.addAll(actions);
         while (!board.isFinished()) {
+            rndActions.clear();
+            rndActions = board.getPossibleActions(board.getCurrentPlayer());
             int index = (int) (Math.random() * rndActions.size());
             Action rndAction = rndActions.get(index);
-            rndActions.clear();
-            rndActions.addAll(executeAction(rndAction, board));
+            board.submit(rndAction);
         }
         int win = board.winner(action.getPlayer());
-        if (win < 0) victories++; //bot wins
-        else if (win > 0) victories--; //bot loses
-    }
-
-    private List<Action> executeAction(Action action, Board board) {
-        board.submit(action);
-        return board.getPossibleActions(board.getCurrentPlayer());
+        if (win > 0) victories++; //bot wins
+        else if (win < 0) victories--; //bot loses
     }
 }

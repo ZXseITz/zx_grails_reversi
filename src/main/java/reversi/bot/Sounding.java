@@ -3,7 +3,6 @@ package reversi.bot;
 import reversi.actions.Action;
 import reversi.game.Board;
 
-import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ForkJoinPool;
 
@@ -26,20 +25,15 @@ public class Sounding implements Callable<ActionRating> {
 
     @Override
     public ActionRating call() {
-        List<Action> actions = executeAction(action, board);
+        board.submit(action);
         if (!board.isFinished()) {
-            victories = fjpool.invoke(new FJSounding(board, action, actions, soundings));
+            victories = fjpool.invoke(new FJSounding(board, action, soundings));
         } else {
             int win = board.winner(action.getPlayer());
             if (win < 0) victories = Integer.MAX_VALUE; //bot wins
             else if (win > 0) victories = Integer.MIN_VALUE; //bot loses
         }
         return new ActionRating(action, victories);
-    }
-
-    private List<Action> executeAction(Action action, Board board) {
-        board.submit(action);
-        return board.getPossibleActions(board.getCurrentPlayer());
     }
 }
 
