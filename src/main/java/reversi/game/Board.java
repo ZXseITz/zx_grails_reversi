@@ -112,26 +112,22 @@ public class Board {
      * @return validation
      */
     private boolean validatePlacing(Token source, Token.Color player) {
-        boolean valid = false;
-        boolean validDir = false;
         boolean inBoard = false;
-        int i = 0, n, tx, ty;
+        int n, tx, ty;
 
-        do {
+        for (int[] loopVar : loopVars) {
             tx = source.getU();
             ty = source.getV();
             n = 0;
             do {
-                tx += loopVars[i][0];
-                ty += loopVars[i][1];
+                tx += loopVar[0];
+                ty += loopVar[1];
                 n++;
                 inBoard = tx >= 0 && tx < 8 && ty >= 0 && ty < 8;
             } while (inBoard && get(tx, ty).getColor() == Token.getOpposite(player));
-            i++;
-            validDir = inBoard && get(tx, ty).getColor() == player && n > 1;
-            valid = i < loopVars.length;
-        } while (!validDir && valid);
-        return valid;
+            if(inBoard && get(tx, ty).getColor() == player && n > 1) return true;
+        }
+        return false;
     }
 
     private boolean validatePassing(Token.Color player) {
