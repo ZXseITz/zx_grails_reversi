@@ -10,55 +10,40 @@ TokenHandler.UNDEF = {value: 0, name: "forestgreen"};
 TokenHandler.WHITE = {value: 1, name: "white"};
 TokenHandler.BLACK = {value: 2, name: "black"};
 
-/**
- * Fades e in
- * @param e element to effect
- * @param colorValue css class for preview
- */
-TokenHandler.fadeInToken = function(e, colorValue) {
-    $(e).css("fill", TokenHandler.getColorFromValue(colorValue));
-    $(e).css("opacity", "0.5");
-};
-
-/**
- * Fades e out
- * @param e element to effect
- */
-TokenHandler.fadeOutToken = function (e) {
-    $(e).css("fill", TokenHandler.UNDEF.name);
-    $(e).css("opacity", "1");
-};
-
-TokenHandler.resetToken = function (e) {
-    $(e).data('selectable', 0);
-    $(e).css({fill: TokenHandler.UNDEF.name, transition: "0s"});
-    $(e).css({opacity: 1, transition: "0s"});
-};
 
 TokenHandler.setColor = function (e, colorValue) {
     $(e).css("fill", TokenHandler.getColorFromValue(colorValue));
 };
 
-TokenHandler.placeToken = function(e, colorValue) {
-    $(e).css("fill", TokenHandler.getColorFromValue(colorValue));
-    $(e).css({opacity: 1, transition: "1s"});
+TokenHandler.enableSelection = function (e, c) {
+    $(e).css("fill", TokenHandler.getColorFromValue(c));
+    $(e).css("opacity", "0.25");
+    $(e).data('selectable', 1);
 };
 
-TokenHandler.changeToken = function(e, colorValue) {
-    $(e).css({fill: TokenHandler.getColorFromValue(colorValue), transition: "1s"});
+TokenHandler.disableSelection = function (e) {
+    $(e).css("fill", TokenHandler.UNDEF.name);
+    $(e).css("opacity", "1");
+    $(e).data('selectable', 0);
 };
 
-TokenHandler.setSelectable = function (e, s) {
-    $(e).data('selectable', s);
+TokenHandler.resetToken = function (e) {
+    $(e).data('selectable', 0);
+    $(e).css({fill: TokenHandler.UNDEF.name, transition: "0s"});
+    $(e).css("opacity", "1");
 };
-
-
 
 TokenHandler.validate = function(e) {
     return $(e).data('selectable') === 1;
 };
 
+TokenHandler.placeToken = function(e, colorValue) {
+    $(e).css("fill", TokenHandler.getColorFromValue(colorValue));
+};
 
+TokenHandler.changeToken = function(e, colorValue) {
+    $(e).css({fill: TokenHandler.getColorFromValue(colorValue), transition: "1s"});
+};
 
 TokenHandler.getTokenID = function(x, y) {
     return "#t" + x + y;

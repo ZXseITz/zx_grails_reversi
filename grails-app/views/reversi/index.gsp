@@ -49,8 +49,6 @@
                     data-selectable="0"
                     data-u="${u}"
                     data-v="${v}"
-                    onmouseover="userAction.mouseOver(this)"
-                    onmouseout="userAction.mouseOut(this)"
                     onclick="userAction.click(this)"
             ></circle>
         </g:each>

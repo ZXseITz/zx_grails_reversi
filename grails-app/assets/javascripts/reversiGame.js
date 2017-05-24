@@ -25,14 +25,14 @@ function Game() {
 
     this.setUp = function (color, selectables) {
         playerColor = color;
-        this.setSelectable(selectables);
+        this.enableSelection(selectables);
     };
 
-    this.setSelectable = function(selectables) {
+    this.enableSelection = function(selectables) {
         if (selectables.length > 0) {
             selectables.forEach(function (item) {
                 const id = TokenHandler.getTokenID(item['x'], item['y']);
-                TokenHandler.setSelectable(id, 1);
+                TokenHandler.enableSelection(id, 1);
             });
         } else {
             connection.pass();
@@ -49,7 +49,9 @@ function Game() {
     };
 
     this.disableSelection = function () {
-        TokenHandler.setSelectable($(".TOKEN"), 0);
+        TokenHandler.disableSelection($('.TOKEN').filter(function () {
+            return TokenHandler.validate(this);
+        }));
     };
 
     this.pass = function (color) {
