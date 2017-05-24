@@ -194,30 +194,30 @@ public class Board {
         return array;
     }
 
-    public List<Action> getBestActions(Token.Color c) {
-        List<Action> actions = new ArrayList<>(30);
-        if (!isFinished()) {
+//    public List<Action> getBestActions(Token.Color c) {
+//        List<Action> actions = new ArrayList<>(30);
+//        if (!isFinished()) {
             //set corner
-            for (int[][] corner : corners) {
-                Token t = get(corner[0][0], corner[0][1]);
-                if (!t.isPlaced() && validatePlacing(t, c)) {
-                    actions.add(new PlacingAction(c, corner[0][0], corner[0][1]));
-                }
-            }
-            //todo block field before corner if corner is not set
-            //all other actions
-            if (actions.isEmpty()) {
-                iterateBoard((token, x, y) -> {
-                    if (!token.isPlaced() && validatePlacing(token, c)) {
-                        actions.add(new PlacingAction(c, token.getU(), token.getV()));
-                    }
-                });
-            }
-            if (actions.isEmpty()) actions.add(new PassAction(c));
-            return actions;
-        }
-        return null;
-    }
+//            for (int[][] corner : corners) {
+//                Token t = get(corner[0][0], corner[0][1]);
+//                if (!t.isPlaced() && validatePlacing(t, c)) {
+//                    actions.add(new PlacingAction(c, corner[0][0], corner[0][1]));
+//                }
+//            }
+//            //todo block field before corner if corner is not set
+//            //all other actions
+//            if (actions.isEmpty()) {
+//                iterateBoard((token, x, y) -> {
+//                    if (!token.isPlaced() && validatePlacing(token, c)) {
+//                        actions.add(new PlacingAction(c, token.getU(), token.getV()));
+//                    }
+//                });
+//            }
+//            if (actions.isEmpty()) actions.add(new PassAction(c));
+//            return actions;
+//        }
+//        return null;
+//    }
 
     public List<Action> getPossibleActions(Token.Color c) {
         List<Action> actions = new ArrayList<>(30);
