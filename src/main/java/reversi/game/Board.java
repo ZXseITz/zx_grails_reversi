@@ -19,16 +19,7 @@ public class Board {
             {-1, -1}
     };
 
-    private static final double[][] probability = new double[][]{
-//            {1.00, 0.13, 0.26, 0.24, 0.24, 0.26, 0.13, 1.00},
-//            {0.13, 0.00, 0.16, 0.17, 0.17, 0.16, 0.00, 0.13},
-//            {0.26, 0.16, 0.25, 0.23, 0.23, 0.25, 0.16, 0.26},
-//            {0.24, 0.17, 0.23, 0.20, 0.20, 0.23, 0.17, 0.24},
-//            {0.24, 0.17, 0.23, 0.20, 0.20, 0.23, 0.17, 0.24},
-//            {0.26, 0.16, 0.25, 0.23, 0.23, 0.25, 0.16, 0.26},
-//            {0.13, 0.00, 0.16, 0.17, 0.17, 0.16, 0.00, 0.13},
-//            {1.00, 0.13, 0.26, 0.24, 0.24, 0.26, 0.13, 1.00}
-
+    private static final double[][] probability = new double[][] {
             {6, 2, 3, 3, 3, 3, 2, 6},
             {2, 1, 2, 2, 2, 2, 1, 2},
             {3, 2, 3, 3, 3, 3, 2, 3},
@@ -40,14 +31,9 @@ public class Board {
     };
 
     private BoardModel model;
-//    private Map<Integer, List<PlacingAction>> pActions;
 
     public Board(BoardModel model) {
         this.model = model;
-//        this.pActions = new HashMap<>(3);
-//        for (int i = 0; i < 3; i++) {
-//            pActions.putIfAbsent(i, new ArrayList<>(28));
-//        }
     }
 
     @FunctionalInterface
@@ -224,7 +210,7 @@ public class Board {
         return null;
     }
 
-    public List<Action> getPossibleActions2(Token.Color c) {
+    public List<Action> getMostProbablyActions(Token.Color c) {
         List<Action> actions = new ArrayList<>(30);
         if (!isFinished()) {
             iterateBoard((token, x, y) -> {
