@@ -2,36 +2,43 @@ package reversi.game;
 
 import reversi.actions.*;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 /**
  * Created by Claudio on 14.02.2017.
  */
 public class Board {
-    private static final int[][] loopVars = new int[][] {
-            { 0, -1 },
-            { 1, -1 },
-            { 1, 0 },
-            { 1, 1 },
-            { 0, 1 },
-            { -1, 1 },
-            { -1, 0 },
-            { -1, -1 }
+    private static final int[][] loopVars = new int[][]{
+            {0, -1},
+            {1, -1},
+            {1, 0},
+            {1, 1},
+            {0, 1},
+            {-1, 1},
+            {-1, 0},
+            {-1, -1}
     };
 
-    private static final int[][][] corners = new int[][][] {
-            {{0, 0}, {0, 1}, {1, 0}, {1, 1}},
-            {{0, 7}, {0, 6}, {1, 7}, {1, 6}},
-            {{7, 0}, {6, 0}, {7, 1}, {6, 1}},
-            {{7, 7}, {7, 6}, {6, 7}, {6, 6}}
+    private static final int[][] stateVars = new int[][]{
+            {0, 2, 0, 1, 1, 0, 2, 0},
+            {2, 2, 2, 2, 2, 2, 2, 2},
+            {0, 2, 0, 1, 1, 0, 2, 0},
+            {1, 2, 1, 1, 1, 1, 2, 1},
+            {1, 2, 1, 1, 1, 1, 2, 1},
+            {0, 2, 0, 1, 1, 0, 2, 0},
+            {2, 2, 2, 2, 2, 2, 2, 2},
+            {0, 2, 0, 1, 1, 0, 2, 0}
     };
 
     private BoardModel model;
+    private Map<Integer, List<PlacingAction>> pActions;
 
     public Board(BoardModel model) {
         this.model = model;
+        this.pActions = new HashMap<>(3);
+        for (int i = 0; i < 3; i++) {
+            pActions.putIfAbsent(i, new ArrayList<>(28));
+        }
     }
 
     @FunctionalInterface
@@ -132,7 +139,7 @@ public class Board {
                 n++;
                 inBoard = tx >= 0 && tx < 8 && ty >= 0 && ty < 8;
             } while (inBoard && get(tx, ty).getColor() == Token.getOpposite(player));
-            if(inBoard && get(tx, ty).getColor() == player && n > 1) return true;
+            if (inBoard && get(tx, ty).getColor() == player && n > 1) return true;
         }
         return false;
     }
@@ -194,41 +201,34 @@ public class Board {
         return array;
     }
 
-//    public List<Action> getBestActions(Token.Color c) {
-//        List<Action> actions = new ArrayList<>(30);
-//        if (!isFinished()) {
-            //set corner
-//            for (int[][] corner : corners) {
-//                Token t = get(corner[0][0], corner[0][1]);
-//                if (!t.isPlaced() && validatePlacing(t, c)) {
-//                    actions.add(new PlacingAction(c, corner[0][0], corner[0][1]));
-//                }
-//            }
-//            //todo block field before corner if corner is not set
-//            //all other actions
-//            if (actions.isEmpty()) {
-//                iterateBoard((token, x, y) -> {
-//                    if (!token.isPlaced() && validatePlacing(token, c)) {
-//                        actions.add(new PlacingAction(c, token.getU(), token.getV()));
-//                    }
-//                });
-//            }
-//            if (actions.isEmpty()) actions.add(new PassAction(c));
-//            return actions;
-//        }
-//        return null;
-//    }
-
     public List<Action> getPossibleActions(Token.Color c) {
         List<Action> actions = new ArrayList<>(30);
         if (!isFinished()) {
-            if (actions.isEmpty()) {
-                iterateBoard((token, x, y) -> {
-                    if (!token.isPlaced() && validatePlacing(token, c)) {
-                        actions.add(new PlacingAction(c, token.getU(), token.getV()));
-                    }
-                });
-            }
+            iterateBoard((token, x, y) -> {
+                if (!token.isPlaced() && validatePlacing(token, c)) {
+                    actions.add(new PlacingAction(c, x, y));
+                }
+            });
+            if (actions.isEmpty()) actions.add(new PassAction(c));
+            return actions;
+        }
+        return null;
+    }
+
+    public List<Action> getBestActions(Token.Color c) {
+        List<Action> actions = new ArrayList<>(30);
+        if (!isFinished()) {
+            pActions.get(0).clear();
+            pActions.get(1).clear();
+            pActions.get(2).clear();
+            iterateBoard((token, x, y) -> {
+                if (!token.isPlaced() && validatePlacing(token, c)) {
+                    pActions.get(stateVars[y][x]).add(new PlacingAction(c, x, y));
+                }
+            });
+            actions.addAll(pActions.get(0));
+            if (actions.isEmpty()) actions.addAll(pActions.get(1));
+            if (actions.isEmpty()) actions.addAll(pActions.get(2));
             if (actions.isEmpty()) actions.add(new PassAction(c));
             return actions;
         }

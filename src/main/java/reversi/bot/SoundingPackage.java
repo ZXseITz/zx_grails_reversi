@@ -32,7 +32,7 @@ public class SoundingPackage implements Callable<Integer> {
 
     private void sounding(Board board) {
         while (!board.isFinished()) {
-            List<Action> list = board.getPossibleActions(board.getCurrentPlayer());
+            List<Action> list = board.getBestActions(board.getCurrentPlayer());
             int index = (int) (Math.random() * list.size());
             Action rndAction = list.get(index);
             board.submit(rndAction);
