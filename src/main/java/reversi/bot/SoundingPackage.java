@@ -3,11 +3,8 @@ package reversi.bot;
 import reversi.actions.Action;
 import reversi.game.Board;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
-import java.util.concurrent.RecursiveAction;
-import java.util.concurrent.RecursiveTask;
 
 /**
  * Created by Claudio on 22.05.2017.
@@ -35,7 +32,7 @@ public class SoundingPackage implements Callable<Integer> {
 
     private void sounding(Board board) {
         while (!board.isFinished()) {
-            List<Action> list = board.getPossibleActions(board.getCurrentPlayer());
+            List<Action> list = board.getBestActions(board.getCurrentPlayer());
             int index = (int) (Math.random() * list.size());
             Action rndAction = list.get(index);
             board.submit(rndAction);

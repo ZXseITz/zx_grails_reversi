@@ -21,11 +21,11 @@ public class Board {
             { -1, -1 }
     };
 
-    private static final int[][] corners = new int[][] {
-            { 0, 0 },
-            { 0, 7 },
-            { 7, 0 },
-            { 7, 7 }
+    private static final int[][][] corners = new int[][][] {
+            {{0, 0}, {0, 1}, {1, 0}, {1, 1}},
+            {{0, 7}, {0, 6}, {1, 7}, {1, 6}},
+            {{7, 0}, {6, 0}, {7, 1}, {6, 1}},
+            {{7, 7}, {7, 6}, {6, 7}, {6, 6}}
     };
 
     private BoardModel model;
@@ -194,15 +194,34 @@ public class Board {
         return array;
     }
 
+    public List<Action> getBestActions(Token.Color c) {
+        List<Action> actions = new ArrayList<>(30);
+        if (!isFinished()) {
+            //set corner
+            for (int[][] corner : corners) {
+                Token t = get(corner[0][0], corner[0][1]);
+                if (!t.isPlaced() && validatePlacing(t, c)) {
+                    actions.add(new PlacingAction(c, corner[0][0], corner[0][1]));
+                }
+            }
+            //todo block field before corner if corner is not set
+            //all other actions
+            if (actions.isEmpty()) {
+                iterateBoard((token, x, y) -> {
+                    if (!token.isPlaced() && validatePlacing(token, c)) {
+                        actions.add(new PlacingAction(c, token.getU(), token.getV()));
+                    }
+                });
+            }
+            if (actions.isEmpty()) actions.add(new PassAction(c));
+            return actions;
+        }
+        return null;
+    }
+
     public List<Action> getPossibleActions(Token.Color c) {
         List<Action> actions = new ArrayList<>(30);
         if (!isFinished()) {
-            for (int[] corner : corners) {
-                Token t = get(corner[0], corner[1]);
-                if (!t.isPlaced() && validatePlacing(t, c)) {
-                    actions.add(new PlacingAction(c, corner[0], corner[1]));
-                }
-            }
             if (actions.isEmpty()) {
                 iterateBoard((token, x, y) -> {
                     if (!token.isPlaced() && validatePlacing(token, c)) {

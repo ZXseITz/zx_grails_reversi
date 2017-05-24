@@ -30,7 +30,7 @@ public class Bot {
             List<Action> pActions = board.getPossibleActions(board.getCurrentPlayer());
             List<Sounding> tasks = new ArrayList<>(pActions.size());
             for (Action action : pActions) {
-                Sounding s = new Sounding(board.clone(), action, 4000);
+                Sounding s = new Sounding(board.clone(), action, 6000);
                 tasks.add(s);
             }
             List<Future<ActionRating>> ars = exSounding.invokeAll(tasks);
