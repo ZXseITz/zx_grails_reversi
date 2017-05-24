@@ -19,26 +19,35 @@ public class Board {
             {-1, -1}
     };
 
-    private static final int[][] stateVars = new int[][]{
-            {0, 2, 0, 1, 1, 0, 2, 0},
-            {2, 2, 2, 2, 2, 2, 2, 2},
-            {0, 2, 0, 1, 1, 0, 2, 0},
-            {1, 2, 1, 1, 1, 1, 2, 1},
-            {1, 2, 1, 1, 1, 1, 2, 1},
-            {0, 2, 0, 1, 1, 0, 2, 0},
-            {2, 2, 2, 2, 2, 2, 2, 2},
-            {0, 2, 0, 1, 1, 0, 2, 0}
+    private static final double[][] probability = new double[][]{
+//            {1.00, 0.13, 0.26, 0.24, 0.24, 0.26, 0.13, 1.00},
+//            {0.13, 0.00, 0.16, 0.17, 0.17, 0.16, 0.00, 0.13},
+//            {0.26, 0.16, 0.25, 0.23, 0.23, 0.25, 0.16, 0.26},
+//            {0.24, 0.17, 0.23, 0.20, 0.20, 0.23, 0.17, 0.24},
+//            {0.24, 0.17, 0.23, 0.20, 0.20, 0.23, 0.17, 0.24},
+//            {0.26, 0.16, 0.25, 0.23, 0.23, 0.25, 0.16, 0.26},
+//            {0.13, 0.00, 0.16, 0.17, 0.17, 0.16, 0.00, 0.13},
+//            {1.00, 0.13, 0.26, 0.24, 0.24, 0.26, 0.13, 1.00}
+
+            {6, 2, 3, 3, 3, 3, 2, 6},
+            {2, 1, 2, 2, 2, 2, 1, 2},
+            {3, 2, 3, 3, 3, 3, 2, 3},
+            {3, 2, 3, 3, 3, 3, 2, 3},
+            {3, 2, 3, 3, 3, 3, 2, 3},
+            {3, 2, 3, 3, 3, 3, 2, 3},
+            {2, 1, 2, 2, 2, 2, 1, 2},
+            {6, 2, 3, 3, 3, 3, 2, 6}
     };
 
     private BoardModel model;
-    private Map<Integer, List<PlacingAction>> pActions;
+//    private Map<Integer, List<PlacingAction>> pActions;
 
     public Board(BoardModel model) {
         this.model = model;
-        this.pActions = new HashMap<>(3);
-        for (int i = 0; i < 3; i++) {
-            pActions.putIfAbsent(i, new ArrayList<>(28));
-        }
+//        this.pActions = new HashMap<>(3);
+//        for (int i = 0; i < 3; i++) {
+//            pActions.putIfAbsent(i, new ArrayList<>(28));
+//        }
     }
 
     @FunctionalInterface
@@ -215,20 +224,16 @@ public class Board {
         return null;
     }
 
-    public List<Action> getBestActions(Token.Color c) {
+    public List<Action> getPossibleActions2(Token.Color c) {
         List<Action> actions = new ArrayList<>(30);
         if (!isFinished()) {
-            pActions.get(0).clear();
-            pActions.get(1).clear();
-            pActions.get(2).clear();
             iterateBoard((token, x, y) -> {
                 if (!token.isPlaced() && validatePlacing(token, c)) {
-                    pActions.get(stateVars[y][x]).add(new PlacingAction(c, x, y));
+                    for (int i = 0; i < probability[y][x]; i++) {
+                        actions.add(new PlacingAction(c, x, y));
+                    }
                 }
             });
-            actions.addAll(pActions.get(0));
-            if (actions.isEmpty()) actions.addAll(pActions.get(1));
-            if (actions.isEmpty()) actions.addAll(pActions.get(2));
             if (actions.isEmpty()) actions.add(new PassAction(c));
             return actions;
         }
