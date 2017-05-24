@@ -16,7 +16,7 @@ function Connection(game) {
         };
 
         socket.onerror = function (e) {
-            console.log("error: ");
+            console.log("error:");
             console.log(e);
         };
 
@@ -33,7 +33,7 @@ function Connection(game) {
                     break;
                 case COM.SERVER_PLACE_OPPONENT:
                     game.place(json.data["color"], json.data["source"], json.data["changes"]);
-                    game.enableSelection(json.data["selection"]);
+                    game.enableSelection(json.data["selection"], json.data["pass"]);
                     game.end(json.data["win"]);
                     break;
                 case COM.SERVER_PASS_CLIENT:
@@ -41,7 +41,7 @@ function Connection(game) {
                     break;
                 case COM.SERVER_PASS_OPPONENT:
                     game.pass(json.data["color"]);
-                    game.enableSelection(json.data["selection"]);
+                    game.enableSelection(json.data["selection"], json.data["pass"]);
                     game.end(json.data["win"]);
                     break;
                 case COM.SERVER_END:

@@ -51,13 +51,13 @@ public abstract class JSONHandler {
         return buildJson(JSONMessage.SERVER_PLACE_CLIENT, data);
     }
 
-    public static String buildJSONPlaceOpponent(Token.Color player, Token source, Token[] changes, Token[] selection, int win) {
+    public static String buildJSONPlaceOpponent(Token.Color player, Token source, Token[] changes, Token[] selection, int pass) {
         JsonObject data = new JsonObject();
         data.addProperty("color", player.getValue());
         data.add("source", buildToken(source));
         data.add("changes", buildTokenArray(changes));
         data.add("selection", buildTokenArray(selection));
-        data.addProperty("win", win);
+        data.addProperty("pass", pass);
         return buildJson(JSONMessage.SERVER_PLACE_OPPONENT, data);
     }
 
@@ -67,11 +67,11 @@ public abstract class JSONHandler {
         return buildJson(JSONMessage.SERVER_PASS_CLIENT, data);
     }
 
-    public static String buildJSONPassOpponent(Token.Color player, Token[] selection, int win) {
+    public static String buildJSONPassOpponent(Token.Color player, Token[] selection, int pass) {
         JsonObject data = new JsonObject();
         data.addProperty("color", player.getValue());
         data.add("selection", buildTokenArray(selection));
-        data.addProperty("win", win);
+        data.addProperty("pass", pass);
         return buildJson(JSONMessage.SERVER_PASS_OPPONENT, data);
     }
 

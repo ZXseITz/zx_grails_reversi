@@ -25,17 +25,17 @@ function Game() {
 
     this.setUp = function (color, selectables) {
         playerColor = color;
-        this.enableSelection(selectables);
+        this.enableSelection(selectables, 0);
     };
 
-    this.enableSelection = function(selectables) {
+    this.enableSelection = function(selectables, pass) {
         if (selectables.length > 0) {
             selectables.forEach(function (item) {
                 const id = TokenHandler.getTokenID(item['x'], item['y']);
                 TokenHandler.enableSelection(id, 1);
             });
         } else {
-            connection.pass();
+            if (pass === 1) connection.pass();
         }
     };
 
