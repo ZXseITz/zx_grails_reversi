@@ -21,6 +21,13 @@ public class Board {
             { -1, -1 }
     };
 
+    private static final int[][] corners = new int[][] {
+            { 0, 0 },
+            { 0, 7 },
+            { 7, 0 },
+            { 7, 7 }
+    };
+
     private BoardModel model;
 
     public Board(BoardModel model) {
@@ -190,11 +197,19 @@ public class Board {
     public List<Action> getPossibleActions(Token.Color c) {
         List<Action> actions = new ArrayList<>(30);
         if (!isFinished()) {
-            iterateBoard((token, x, y) -> {
-                if (!token.isPlaced() && validatePlacing(token, c)) {
-                    actions.add(new PlacingAction(c, token.getU(), token.getV()));
+            for (int[] corner : corners) {
+                Token t = get(corner[0], corner[1]);
+                if (!t.isPlaced() && validatePlacing(t, c)) {
+                    actions.add(new PlacingAction(c, corner[0], corner[1]));
                 }
-            });
+            }
+            if (actions.isEmpty()) {
+                iterateBoard((token, x, y) -> {
+                    if (!token.isPlaced() && validatePlacing(token, c)) {
+                        actions.add(new PlacingAction(c, token.getU(), token.getV()));
+                    }
+                });
+            }
             if (actions.isEmpty()) actions.add(new PassAction(c));
             return actions;
         }
