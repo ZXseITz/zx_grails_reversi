@@ -2,14 +2,16 @@ package reversi;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import mvc.ReversiEndPointConfig;
 import net.sf.ehcache.util.concurrent.ConcurrentHashMap;
 import reversi.bot.Bot;
 import reversi.bot.RoundBot;
 import reversi.game.*;
 import reversi.json.JSONHandler;
 import reversi.json.JSONMessage;
-import reversi.pvp.RoundPVP;
+import reversi.pvp.PVP;
 
+import javax.ejb.EJB;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
@@ -18,37 +20,23 @@ import javax.websocket.*;
 import javax.websocket.server.ServerContainer;
 import javax.websocket.server.ServerEndpoint;
 import java.util.Map;
-import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.BlockingQueue;
 
 /**
  * Created by Claudio on 17.05.2017.
  */
 @WebListener
-@ServerEndpoint("/reversi/room")
+@ServerEndpoint(value = "/reversi/room", configurator = ReversiEndPointConfig.class)
 public class ReversiServer implements ServletContextListener {
     private JsonParser gParser;
     private Map<String, Player> users;
-    private final BlockingQueue<Player> pvpWhite;
-    private final BlockingQueue<Player> pvpBlack;
+    private PVP pvp;
 //    private Map<Integer, Round> rounds;
 
     public ReversiServer() {
         gParser = new JsonParser();
+        pvp = new PVP();
         users = new ConcurrentHashMap<>();
 //        rounds = new ConcurrentHashMap<>();
-        pvpWhite = new ArrayBlockingQueue<>(20);
-        pvpBlack = new ArrayBlockingQueue<>(20);
-        Thread matcher = new Thread(() -> {
-            try {
-                while (true) {
-                    startPVP(pvpWhite.take(), pvpBlack.take());
-                }
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        });
-        matcher.start();
     }
 
     @Override
@@ -109,8 +97,7 @@ public class ReversiServer implements ServletContextListener {
                             round.start();
                         } else {
                             //pvp
-                            if (playerColor == Token.Color.WHITE) pvpWhite.add(player);
-                            else pvpBlack.add(player);
+                            pvp.waitForMatching(player, playerColor);
                         }
                     }
 //                    rounds.putIfAbsent(r.getId(), r);
@@ -132,12 +119,5 @@ public class ReversiServer implements ServletContextListener {
         } catch (Exception e) {
             e.printStackTrace();
         }
-    }
-
-    private void startPVP(Player white, Player black) {
-        Board board = new Board();
-        board.setUpBoard();
-        Round round = new RoundPVP(board, white, black);
-        round.start();
     }
 }
