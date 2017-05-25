@@ -24,6 +24,12 @@ public class Token {
         }
     }
 
+    public static Color getColorFromValue(int value) {
+        if (value == 1) return Color.WHITE;
+        else if (value == 2) return Color.BLACK;
+        else return Color.UNDEFINED;
+    }
+
     public static Color getOpposite(Color color) {
         if (color == Color.WHITE) return Color.BLACK;
         else if (color == Color.BLACK) return Color.WHITE;

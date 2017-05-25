@@ -94,6 +94,10 @@ public abstract class JSONHandler {
     // client to server
 
     public static int[] getXYfromJSON(JsonObject object) {
-        return new int[]{object.get("x").getAsInt(), object.get("y").getAsInt()};
+        return new int[] {object.get("x").getAsInt(), object.get("y").getAsInt()};
+    }
+
+    public static int[] getColorTypefromJSON(JsonObject object) {
+        return new int[] {object.get("color").getAsInt(), object.get("gameType").getAsInt()};
     }
 }

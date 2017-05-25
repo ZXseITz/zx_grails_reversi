@@ -4,8 +4,7 @@ package reversi.json;
  * Created by Claudio on 16.05.2017.
  */
 public abstract class JSONMessage {
-    public static final int CLIENT_NEW_BOT_GAME = 0;
-    public static final int CLIENT_NEW_GAME = 1;
+    public static final int CLIENT_NEW_GAME = 0;
     public static final int SERVER_INIT = 2;
 
     public static final int CLIENT_PLACE = 10;
@@ -17,4 +16,9 @@ public abstract class JSONMessage {
     public static final int SERVER_PASS_OPPONENT = 22;
 
     public static final int SERVER_END = 50;
+
+    public static class GameType {
+        public static final int BOT = 0;
+        public static final int PVP = 1;
+    }
 }

@@ -80,28 +80,39 @@ public class ReversiServer implements ServletContextListener {
             JsonObject o = new JsonParser().parse(message).getAsJsonObject();
             int type = o.get("type").getAsInt();
             switch (type) {
-                case JSONMessage.CLIENT_NEW_BOT_GAME: {
+                case JSONMessage.CLIENT_NEW_GAME: {
                     Player player = users.get(client.getId());
-                    Token.Color clientColor = Token.Color.WHITE; /* Math.random() < 0.5? Token.Color.WHITE: Token.Color.BLACK */
-                    Board board = new Board();
-                    board.setUpBoard();
-                    Bot bot = new Bot(Token.getOpposite(clientColor));
-                    Round r = new Round(player, board, clientColor, bot);
-//                    rounds.putIfAbsent(r.getId(), r);
-                    users.get(client.getId()).setRound(r);
+                    int[] ct = JSONHandler.getColorTypefromJSON(o.getAsJsonObject("data"));
+                    Token.Color clientColor = Token.getColorFromValue(ct[0]);
+                    if (clientColor != Token.Color.UNDEFINED &&
+                            (ct[1] == JSONMessage.GameType.BOT || ct[1] == JSONMessage.GameType.PVP)) {
+                        Board board = new Board();
+                        board.setUpBoard();
 
-                    if (clientColor == Token.Color.WHITE) {
-                        Token[] selection = getSelection(board, clientColor);
-                        String json = JSONHandler.buildJsonInit(clientColor, board.getPlacedTokens(), selection);
-                        client.getBasicRemote().sendText(json);
+                        if (ct[1] == JSONMessage.GameType.BOT) {
+                            //bot game
+                            Bot bot = new Bot(Token.getOpposite(clientColor));
+                            Round r = new Round(player, board, clientColor, bot);
+                            users.get(client.getId()).setRound(r);
+                            if (clientColor == Token.Color.WHITE) {
+                                //client starts
+                                Token[] selection = getSelection(board, clientColor);
+                                String json = JSONHandler.buildJsonInit(clientColor, board.getPlacedTokens(), selection);
+                                client.getBasicRemote().sendText(json);
+                            } else {
+                                //bot starts
+                                respond(r);
+                            }
+                        } else {
+                            //pvp
+
+                        }
                     }
 
+//                    rounds.putIfAbsent(r.getId(), r);
 //                    System.out.println("send to Player " + client.getId() + " json " + json);
                     break;
                 }
-                case JSONMessage.CLIENT_NEW_GAME:
-                    //TODO implement pvp
-                    break;
                 case JSONMessage.CLIENT_PLACE: {
                     Player p = users.get(client.getId());
                     if (p.isInRound()) {
