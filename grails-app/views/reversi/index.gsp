@@ -55,5 +55,14 @@
     </g:each>
 </svg>
 <button type="button" onclick="userAction.newBotGame()">new bot game</button>
+<br>
+<div>
+    <label>Withe Tokens: </label>
+    <label id="whites">0</label>
+</div>
+<div>
+    <label>Black Tokens: </label>
+    <label id="blacks">0</label>
+</div>
 </body>
 </html>

@@ -82,17 +82,17 @@ public class ReversiServer implements ServletContextListener {
             switch (type) {
                 case JSONMessage.CLIENT_NEW_BOT_GAME: {
                     Player player = users.get(client.getId());
-                    Token.Color pColor = Token.Color.WHITE; /* Math.random() < 0.5? Token.Color.WHITE: Token.Color.BLACK */
-                    Board board = new Board(new BoardModel());
+                    Token.Color clientColor = Token.Color.WHITE; /* Math.random() < 0.5? Token.Color.WHITE: Token.Color.BLACK */
+                    Board board = new Board();
                     board.setUpBoard();
-                    Bot bot = new Bot(Token.getOpposite(pColor));
-                    Round r = new Round(player, board, pColor, bot);
+                    Bot bot = new Bot(Token.getOpposite(clientColor));
+                    Round r = new Round(player, board, clientColor, bot);
 //                    rounds.putIfAbsent(r.getId(), r);
                     users.get(client.getId()).setRound(r);
 
-                    if (r.getPlayerColor() == Token.Color.WHITE) {
-                        Token[] selection = getSelection(board, r.getPlayerColor());
-                        String json = JSONHandler.buildJsonSelection(r.getPlayerColor(), selection);
+                    if (clientColor == Token.Color.WHITE) {
+                        Token[] selection = getSelection(board, clientColor);
+                        String json = JSONHandler.buildJsonInit(clientColor, board.getPlacedTokens(), selection);
                         client.getBasicRemote().sendText(json);
                     }
 
@@ -111,8 +111,8 @@ public class ReversiServer implements ServletContextListener {
                         PlacingAction a = new PlacingAction(r.getPlayerColor(), xy[0], xy[1]);
                         ChangedAction changed = board.submit(a);
                         if (changed != null) {
-                            String json = JSONHandler.buildJSONPlaceClient(changed.getPlayer(), changed.getSource(),
-                                    changed.getNeighbours());
+                            String json = JSONHandler.buildJSONPlaceClient(changed.getPlayer(), board.getPlacedTokens(),
+                                    changed.getSource(), changed.getNeighbours());
                             p.send(json);
 
                             respond(r);
@@ -161,8 +161,8 @@ public class ReversiServer implements ServletContextListener {
             ChangedAction changed = board.submit(action);
             if (changed != null) {
                 Token[] selection = getSelection(board, r.getPlayerColor());
-                String json = JSONHandler.buildJSONPlaceOpponent(changed.getPlayer(), changed.getSource(),
-                        changed.getNeighbours(), selection, !board.isFinished() ? 1 : 0);
+                String json = JSONHandler.buildJSONPlaceOpponent(changed.getPlayer(), board.getPlacedTokens(),
+                        changed.getSource(), changed.getNeighbours(), selection, !board.isFinished() ? 1 : 0);
                 r.getPlayer().send(json);
 
                 if (board.isFinished()) {

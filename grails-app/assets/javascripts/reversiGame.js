@@ -61,4 +61,9 @@ function Game() {
     this.end = function (win) {
         if (win > -2) alert(win > 0 ? "Victory" : (win < 0 ? "Defeat" : "Remis"));
     };
+
+    this.updatePlacedTokens = function (placed) {
+        $("#whites").text(`${placed['white']}`);
+        $("#blacks").text(`${placed['black']}`);
+    }
 }

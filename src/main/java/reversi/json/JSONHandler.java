@@ -34,26 +34,36 @@ public abstract class JSONHandler {
         return array;
     }
 
+    private static JsonObject buildPlaced(int[] placed) {
+        JsonObject t = new JsonObject();
+        t.addProperty("white", placed[0]);
+        t.addProperty("black", placed[1]);
+        return t;
+    }
+
     // server to client
 
-    public static String buildJsonSelection(Token.Color player, Token[] selection) {
+    public static String buildJsonInit(Token.Color player, int[] placed, Token[] selection) {
         JsonObject data = new JsonObject();
         data.addProperty("color", player.getValue());
+        data.add("placed", buildPlaced(placed));
         data.add("selection", buildTokenArray(selection));
         return buildJson(JSONMessage.SERVER_INIT, data);
     }
     
-    public static String buildJSONPlaceClient(Token.Color player, Token source, Token[] changes) {
+    public static String buildJSONPlaceClient(Token.Color player, int[] placed, Token source, Token[] changes) {
         JsonObject data = new JsonObject();
         data.addProperty("color", player.getValue());
+        data.add("placed", buildPlaced(placed));
         data.add("source", buildToken(source));
         data.add("changes", buildTokenArray(changes));
         return buildJson(JSONMessage.SERVER_PLACE_CLIENT, data);
     }
 
-    public static String buildJSONPlaceOpponent(Token.Color player, Token source, Token[] changes, Token[] selection, int pass) {
+    public static String buildJSONPlaceOpponent(Token.Color player, int[] placed, Token source, Token[] changes, Token[] selection, int pass) {
         JsonObject data = new JsonObject();
         data.addProperty("color", player.getValue());
+        data.add("placed", buildPlaced(placed));
         data.add("source", buildToken(source));
         data.add("changes", buildTokenArray(changes));
         data.add("selection", buildTokenArray(selection));

@@ -20,20 +20,44 @@ public class Board {
     };
 
     private static final double[][] probability = new double[][] {
-            {6, 2, 3, 3, 3, 3, 2, 6},
+            {8, 2, 3, 3, 3, 3, 2, 8},
             {2, 1, 2, 2, 2, 2, 1, 2},
             {3, 2, 3, 3, 3, 3, 2, 3},
             {3, 2, 3, 3, 3, 3, 2, 3},
             {3, 2, 3, 3, 3, 3, 2, 3},
             {3, 2, 3, 3, 3, 3, 2, 3},
             {2, 1, 2, 2, 2, 2, 1, 2},
-            {6, 2, 3, 3, 3, 3, 2, 6}
+            {8, 2, 3, 3, 3, 3, 2, 8}
     };
 
-    private BoardModel model;
+    private final Token[][] tokens = new Token[8][8];
+    private Token.Color currentPlayer;
+    private int[] placedTokens;
+    private boolean prevPassed;
+    private boolean finished;
 
-    public Board(BoardModel model) {
-        this.model = model;
+    public Board() {
+        for (int i = 0; i < 8; i++) {
+            for (int j = 0; j < 8; j++) {
+                tokens[i][j] = new Token(j, i);
+            }
+        }
+        currentPlayer = Token.Color.WHITE;
+        placedTokens = new int[2];
+        prevPassed = false;
+        finished = false;
+    }
+
+    private Board(Board board) {
+        for (int i = 0; i < 8; i++) {
+            for (int j = 0; j < 8; j++) {
+                this.tokens[i][j] = board.get(j, i).clone();
+            }
+        }
+        currentPlayer = board.currentPlayer;
+        placedTokens = board.placedTokens.clone();
+        prevPassed = board.prevPassed;
+        finished = board.finished;
     }
 
     @FunctionalInterface
@@ -49,50 +73,52 @@ public class Board {
         }
     }
 
-    private void inc() {
-        model.finished = ++model.placedTokens == 64;
-    }
-
-    private void swapCurrentPlayer() {
-        if (model.currentPlayer == Token.Color.WHITE)
-            model.currentPlayer = Token.Color.BLACK;
-        else
-            model.currentPlayer = Token.Color.WHITE;
-    }
-
     public Token get(int x, int y) {
-        return model.get(x, y);
+        return tokens[y][x];
     }
 
     public Token.Color getCurrentPlayer() {
-        return model.currentPlayer;
+        return currentPlayer;
+    }
+
+    public int[] getPlacedTokens() {
+        return placedTokens;
     }
 
     public boolean hasPrevPassed() {
-        return model.prevPassed;
-    }
-
-    private void setPrevPassed(boolean prevPassed) {
-        if (model.prevPassed && prevPassed) model.finished = true;
-        model.prevPassed = prevPassed;
+        return prevPassed;
     }
 
     public boolean isFinished() {
-        return model.finished;
+        return finished;
+    }
+
+    private void setPrevPassed(boolean prevPassed) {
+        if (this.prevPassed && prevPassed) finished = true;
+        this.prevPassed = prevPassed;
+    }
+
+    private void updatePlacedTokens(int changed) {
+        placedTokens[currentPlayer.getValue() - 1] += 1 + changed;
+        placedTokens[Token.getOpposite(currentPlayer).getValue() - 1] -= changed;
+        finished = placedTokens[0] + placedTokens[1] >= 64;
+    }
+
+    private void swapCurrentPlayer() {
+        currentPlayer = Token.getOpposite(currentPlayer);
     }
 
     /**
      * Setup the board, ready for a new Game
      */
     public void setUpBoard() {
-        iterateBoard((token, x, y) -> {
-            token.setColor(Token.Color.UNDEFINED);
-        });
+        iterateBoard((token, x, y) -> token.setColor(Token.Color.UNDEFINED));
         get(3, 3).setColor(Token.Color.WHITE);
         get(4, 4).setColor(Token.Color.WHITE);
         get(3, 4).setColor(Token.Color.BLACK);
         get(4, 3).setColor(Token.Color.BLACK);
-        model.placedTokens = 4;
+        placedTokens[0] = 2;
+        placedTokens[1] = 2;
     }
 
     /**
@@ -181,19 +207,8 @@ public class Board {
 
     public int winner() {
         if (!isFinished()) throw new UnsupportedOperationException("Game is still running");
-        int[] array = countPlacedTokens();
+        int[] array = getPlacedTokens();
         return array[0] - array[1];
-    }
-
-    public int[] countPlacedTokens() {
-        int[] array = new int[2];
-        array[0] = 0;
-        array[1] = 0;
-        iterateBoard((token, x, y) -> {
-            if (token.isWhite()) array[0] += 1;
-            else if (token.isBlack()) array[1] += 1;
-        });
-        return array;
     }
 
     public List<Action> getPossibleActions(Token.Color c) {
@@ -241,17 +256,17 @@ public class Board {
                     source.setColor(p.getPlayer());
                     for (Token t : neighbours)
                         t.setColor(p.getPlayer());
-                    swapCurrentPlayer();
                     setPrevPassed(false);
-                    inc();
+                    updatePlacedTokens(neighbours.size());
+                    swapCurrentPlayer();
                     return new ChangedAction(p.getPlayer(), source, neighboursArray);
                 }
             }
         } else if (a instanceof PassAction) {
             PassAction p = (PassAction) a;
             if (!isFinished() && p.getPlayer() == getCurrentPlayer() && validatePassing(p.getPlayer())) {
-                swapCurrentPlayer();
                 setPrevPassed(true);
+                swapCurrentPlayer();
                 return new ChangedAction(p.getPlayer(), null, null);
             }
         }
@@ -259,7 +274,7 @@ public class Board {
     }
 
     public Board clone() {
-        return new Board(model.clone());
+        return new Board(this);
     }
 
     @Override

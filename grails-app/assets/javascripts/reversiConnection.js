@@ -27,12 +27,15 @@ function Connection(game) {
             switch (json.type) {
                 case COM.SERVER_INIT:
                     game.setUp(json.data["color"], json.data["selection"]);
+                    game.updatePlacedTokens(json.data["placed"]);
                     break;
                 case COM.SERVER_PLACE_CLIENT:
                     game.place(json.data["color"], json.data["source"], json.data["changes"]);
+                    game.updatePlacedTokens(json.data["placed"]);
                     break;
                 case COM.SERVER_PLACE_OPPONENT:
                     game.place(json.data["color"], json.data["source"], json.data["changes"]);
+                    game.updatePlacedTokens(json.data["placed"]);
                     game.enableSelection(json.data["selection"], json.data["pass"]);
                     game.end(json.data["win"]);
                     break;
