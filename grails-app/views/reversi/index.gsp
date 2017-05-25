@@ -29,6 +29,13 @@
     double a = width / 8
     double b = height / 8
     double r = Math.min(a, b) * 3 / 8
+
+    int COLOR_UNDEFINIED = 0
+    int COLOR_WHITE = 1
+    int COLOR_BLACK = 2
+
+    int GAME_BOT = 0
+    int GAME_PVP = 1
 %>
 <svg width="${width}" height="${height}" class="svg">
 <!-- draw grid -->
@@ -49,20 +56,36 @@
                     data-selectable="0"
                     data-u="${u}"
                     data-v="${v}"
-                    onclick="userAction.click(this)"
-            ></circle>
+                    onclick="userAction.click(this)"></circle>
         </g:each>
     </g:each>
 </svg>
-<button type="button" onclick="userAction.newBotGame()">new bot game</button>
 <br>
+
 <div>
-    <label>Withe Tokens: </label>
+    <label>Withe Tokens:</label>
     <label id="whites">0</label>
 </div>
+
 <div>
-    <label>Black Tokens: </label>
+    <label>Black Tokens:</label>
     <label id="blacks">0</label>
+</div>
+
+<div>
+    <label>Select color</label>
+    <select id="gamecolor">
+        <option value="${COLOR_WHITE}" selected>white</option>
+        <option value="${COLOR_BLACK}">black</option>
+    </select>
+    <br>
+    <label>Select game type</label>
+    <select id="gametype">
+        <option value="${GAME_BOT}" selected>bot</option>
+        <option value="${GAME_PVP}">pvp</option>
+    </select>
+    <br>
+    <button type="button" onclick="userAction.newGame()">new game</button>
 </div>
 </body>
 </html>

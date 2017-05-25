@@ -67,8 +67,8 @@ function Connection(game) {
         socket.send(json);
     }
 
-    this.botGame = function () {
-        sendJSON(COM.CLIENT_NEW_BOT_GAME);
+    this.newGame = function (color, gtype) {
+        sendJSON(COM.CLIENT_NEW_GAME, {'color': color, 'gameType': gtype});
     };
 
     this.place = function (u, v) {

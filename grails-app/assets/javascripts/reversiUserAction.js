@@ -19,7 +19,9 @@ userAction.click = function(e) {
     }
 };
 
-userAction.newBotGame = function() {
+userAction.newGame = function() {
+    const color = $("#gamecolor").val();
+    const gType = $("#gametype").val();
     game.setUpUI();
-    game.getConnection().botGame();
+    game.getConnection().newGame(color, gType);
 };
