@@ -9,6 +9,7 @@ import reversi.game.Player;
 import reversi.game.Round;
 import reversi.game.Token;
 import reversi.json.JSONHandler;
+import reversi.json.JSONMessage;
 
 import java.util.concurrent.Future;
 
@@ -55,30 +56,32 @@ public class RoundBot extends Round {
 
     @Override
     public void place(Player player, int[] xy) {
-        if (player.isInRound() && player.getRound() == this && playerColor == getBoard().getCurrentPlayer()) {
-            PlacingAction a = new PlacingAction(playerColor, xy[0], xy[1]);
-            ChangedAction changed = getBoard().submit(a);
-            if (changed != null) {
-                String json = JSONHandler.buildJSONPlaceClient(changed.getPlayer(), getBoard().getPlacedTokens(),
-                        changed.getSource(), changed.getNeighbours());
-                player.send(json);
+        PlacingAction a = new PlacingAction(playerColor, xy[0], xy[1]);
+        ChangedAction changed = getBoard().submit(a);
+        if (changed == null) {
+            String json = JSONHandler.buildJSONError(JSONMessage.Error.INVALID_ACTION);
+            player.send(json);
+        } else {
+            String json = JSONHandler.buildJSONPlaceClient(changed.getPlayer(), getBoard().getPlacedTokens(),
+                    changed.getSource(), changed.getNeighbours());
+            player.send(json);
 
-                respond();
-            }
+            respond();
         }
     }
 
     @Override
     public void pass(Player player) {
-        if (player.isInRound() && player.getRound() == this && playerColor == getBoard().getCurrentPlayer()) {
-            PassAction a = new PassAction(playerColor);
-            ChangedAction changed = getBoard().submit(a);
-            if (changed != null) {
-                String json = JSONHandler.buildJSONPassClient(playerColor);
-                player.send(json);
+        PassAction a = new PassAction(playerColor);
+        ChangedAction changed = getBoard().submit(a);
+        if (changed == null) {
+            String json = JSONHandler.buildJSONError(JSONMessage.Error.INVALID_ACTION);
+            player.send(json);
+        } else {
+            String json = JSONHandler.buildJSONPassClient(playerColor);
+            player.send(json);
 
-                respond();
-            }
+            respond();
         }
     }
 
@@ -95,31 +98,27 @@ public class RoundBot extends Round {
         }
     }
 
-    private void botAction (Action action) {
+    private void botAction(Action action) {
         Board board = getBoard();
         if (action instanceof PlacingAction) {
             ChangedAction changed = board.submit(action);
-            if (changed != null) {
-                Token[] selection = getSelection(board, playerColor);
-                String json = JSONHandler.buildJSONPlaceOpponent(changed.getPlayer(), board.getPlacedTokens(),
-                        changed.getSource(), changed.getNeighbours(), selection, !board.isFinished() ? 1 : 0);
-                player.send(json);
+            Token[] selection = getSelection(board, playerColor);
+            String json = JSONHandler.buildJSONPlaceOpponent(changed.getPlayer(), board.getPlacedTokens(),
+                    changed.getSource(), changed.getNeighbours(), selection, !board.isFinished() ? 1 : 0);
+            player.send(json);
 
-                if (board.isFinished()) {
-                    sendEnding();
-                }
+            if (board.isFinished()) {
+                sendEnding();
             }
         } else if (action instanceof PassAction) {
             ChangedAction changed = board.submit(action);
-            if (changed != null) {
-                Token[] selection = getSelection(board, playerColor);
-                String json = JSONHandler.buildJSONPassOpponent(changed.getPlayer(), selection,
-                        !board.isFinished() ? 1 : 0);
-                player.send(json);
+            Token[] selection = getSelection(board, playerColor);
+            String json = JSONHandler.buildJSONPassOpponent(changed.getPlayer(), selection,
+                    !board.isFinished() ? 1 : 0);
+            player.send(json);
 
-                if (board.isFinished()) {
-                    sendEnding();
-                }
+            if (board.isFinished()) {
+                sendEnding();
             }
         }
     }
@@ -128,5 +127,6 @@ public class RoundBot extends Round {
         int win = getBoard().winner(playerColor);
         String json = JSONHandler.buildJSONEnd(win);
         player.send(json);
+        player.setRound(null);
     }
 }

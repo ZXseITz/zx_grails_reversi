@@ -91,6 +91,12 @@ public abstract class JSONHandler {
         return buildJson(JSONMessage.SERVER_END, data);
     }
 
+    public static String buildJSONError(int error) {
+        JsonObject data = new JsonObject();
+        data.addProperty("error", error);
+        return buildJson(JSONMessage.SERVER_ERROR, data);
+    }
+
     // client to server
 
     public static int[] getXYfromJSON(JsonObject object) {

@@ -7,6 +7,8 @@ public abstract class JSONMessage {
     public static final int CLIENT_NEW_GAME = 0;
     public static final int SERVER_INIT = 2;
 
+    public static final int SERVER_ERROR = 5;
+
     public static final int CLIENT_PLACE = 10;
     public static final int SERVER_PLACE_CLIENT = 11;
     public static final int SERVER_PLACE_OPPONENT = 12;
@@ -20,5 +22,15 @@ public abstract class JSONMessage {
     public static class GameType {
         public static final int BOT = 0;
         public static final int PVP = 1;
+    }
+
+    public static class Error {
+        public static final int GENERAL_ERROR = 0;
+        public static final int CONNECTION_ERROR = 1;
+
+        public static final int INVALID_GAME = 10;
+        public static final int INVALID_ACTION = 11;
+
+        public static final int OPPONENT_DISCONNECTED = 20;
     }
 }

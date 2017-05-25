@@ -10,8 +10,8 @@ import reversi.game.*;
 import reversi.json.JSONHandler;
 import reversi.json.JSONMessage;
 import reversi.pvp.PVP;
+import reversi.pvp.RoundPVP;
 
-import javax.ejb.EJB;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
@@ -66,6 +66,17 @@ public class ReversiServer implements ServletContextListener {
     public void onClose(Session client) {
 //        Player p = users.get(client.getId());
 //        if (p.isInRound()) rounds.remove(p.getRound().getId());
+
+        Player player = users.get(client.getId());
+        //TODO synchronize with pvp
+        if (! player.isInRound()) {
+            pvp.removeFromMatching(player);
+        } else {
+            Round round = player.getRound();
+            if(round instanceof RoundPVP) {
+                ((RoundPVP) round).disconnect(player);
+            }
+        }
         users.remove(client.getId());
         System.out.println("Player " + client.getId() + " has left");
     }
@@ -107,12 +118,22 @@ public class ReversiServer implements ServletContextListener {
                 case JSONMessage.CLIENT_PLACE: {
                     Player player = users.get(client.getId());
                     int[] xy = JSONHandler.getXYfromJSON(json.getAsJsonObject("data"));
-                    player.getRound().place(player, xy);
+                    if (!player.isInRound()) {
+                        String error = JSONHandler.buildJSONError(JSONMessage.Error.INVALID_GAME);
+                        player.send(error);
+                    } else {
+                        player.getRound().place(player, xy);
+                    }
                     break;
                 }
                 case JSONMessage.CLIENT_PASS: {
                     Player player = users.get(client.getId());
-                    player.getRound().pass(player);
+                    if (!player.isInRound()) {
+                        String error = JSONHandler.buildJSONError(JSONMessage.Error.INVALID_GAME);
+                        player.send(error);
+                    } else {
+                        player.getRound().pass(player);
+                    }
                     break;
                 }
             }

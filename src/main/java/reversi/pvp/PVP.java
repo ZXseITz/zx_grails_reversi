@@ -31,6 +31,11 @@ public class PVP {
         matcher.start();
     }
 
+    public void removeFromMatching(Player player) {
+        pvpWhite.remove(player);
+        pvpBlack.remove(player);
+    }
+
     public void waitForMatching(Player player, Token.Color playerColor) {
         if (playerColor == Token.Color.WHITE) pvpWhite.add(player);
         else pvpBlack.add(player);

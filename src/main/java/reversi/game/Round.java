@@ -13,7 +13,7 @@ public abstract class Round {
     private static final AtomicInteger counter = new AtomicInteger(1);
 
     private int id;
-    private Board board;
+    private volatile Board board;
 
     public Round(Board board) {
         this.id = counter.getAndIncrement();
