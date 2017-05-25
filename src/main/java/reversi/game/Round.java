@@ -1,26 +1,23 @@
 package reversi.game;
 
 import reversi.bot.Bot;
+import reversi.json.JSONHandler;
+
+import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Created by Claudio on 21.05.2017.
  */
-public class Round {
+public abstract class Round {
     private static final AtomicInteger counter = new AtomicInteger(1);
 
     private int id;
-    private Player player;
-    private Token.Color playerColor;
     private Board board;
-    private Bot bot;
 
-    public Round(Player player, Board board, Token.Color color, Bot bot) {
+    public Round(Board board) {
         this.id = counter.getAndIncrement();
-        this.player = player;
         this.board = board;
-        this.playerColor = color;
-        this.bot = bot;
     }
 
     public int getId() {
@@ -31,15 +28,14 @@ public class Round {
         return board;
     }
 
-    public Player getPlayer() {
-        return player;
-    }
+    public abstract void start();
+    public abstract void place(Player player, int[] xy);
+    public abstract void pass(Player player);
 
-    public Token.Color getPlayerColor() {
-        return playerColor;
-    }
-
-    public Bot getBot() {
-        return bot;
+    protected Token[] getSelection(Board board, Token.Color color) {
+        List<Token> list = board.getSelectableTokens(color);
+        Token[] selection = new Token[list.size()];
+        list.toArray(selection);
+        return selection;
     }
 }
