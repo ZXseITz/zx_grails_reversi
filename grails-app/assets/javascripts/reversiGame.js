@@ -32,7 +32,7 @@ function Game() {
         if (selectables.length > 0) {
             selectables.forEach(function (item) {
                 const id = TokenHandler.getTokenID(item['x'], item['y']);
-                TokenHandler.enableSelection(id, 1);
+                TokenHandler.enableSelection(id, playerColor);
             });
         } else {
             if (pass === 1) connection.pass();
