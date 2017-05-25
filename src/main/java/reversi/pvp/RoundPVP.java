@@ -35,7 +35,7 @@ public class RoundPVP extends Round {
 
     public Player getOpponent(Player player) {
         if(players.containsKey(player)) {
-            return players.entrySet().stream().filter(e -> e != player).findFirst().get().getKey();
+            return players.entrySet().stream().filter(e -> e.getKey() != player).findFirst().get().getKey();
         }
         return null;
     }
