@@ -1,6 +1,7 @@
 package reversi.game;
 
 import javax.websocket.Session;
+import java.io.IOException;
 
 /**
  * Created by Claudio on 21.05.2017.
@@ -48,8 +49,8 @@ public class Player {
     public void send(String json) {
         try {
             session.getBasicRemote().sendText(json);
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (IOException ioe) {
+            //ignore
         }
     }
 

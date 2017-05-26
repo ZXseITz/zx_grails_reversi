@@ -31,10 +31,10 @@ public class Board {
     };
 
     private final Token[][] tokens = new Token[8][8];
-    private Token.Color currentPlayer;
-    private int[] placedTokens;
-    private boolean prevPassed;
-    private boolean finished;
+    private volatile Token.Color currentPlayer;
+    private final int[] placedTokens;
+    private volatile boolean prevPassed;
+    private volatile boolean finished;
 
     public Board() {
         for (int i = 0; i < 8; i++) {
@@ -205,7 +205,7 @@ public class Board {
         }
     }
 
-    public int winner() {
+    private int winner() {
         if (!isFinished()) throw new UnsupportedOperationException("Game is still running");
         int[] array = getPlacedTokens();
         return array[0] - array[1];

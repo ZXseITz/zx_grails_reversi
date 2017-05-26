@@ -47,7 +47,7 @@ public class Token {
         return sb.toString();
     }
 
-    private Color color;
+    private volatile Color color;
     private final int u, v;
 
     public Token(int u, int v) {

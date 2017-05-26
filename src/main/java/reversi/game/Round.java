@@ -14,10 +14,12 @@ public abstract class Round {
 
     private int id;
     private volatile Board board;
+    protected final Object actionLock;
 
     public Round(Board board) {
         this.id = counter.getAndIncrement();
         this.board = board;
+        actionLock = new Object();
     }
 
     public int getId() {

@@ -55,31 +55,35 @@ public class RoundBot extends Round {
     @Override
     public void place(Player player, int[] xy) {
         PlacingAction a = new PlacingAction(playerColor, xy[0], xy[1]);
-        ChangedAction changed = getBoard().submit(a);
-        if (changed == null) {
-            String json = JSONHandler.buildJSONError(JSONMessage.Error.INVALID_ACTION);
-            player.send(json);
-        } else {
-            String json = JSONHandler.buildJSONPlaceClient(changed.getPlayer(), getBoard().getPlacedTokens(),
-                    changed.getSource(), changed.getNeighbours());
-            player.send(json);
+        synchronized (actionLock) {
+            ChangedAction changed = getBoard().submit(a);
+            if (changed == null) {
+                String json = JSONHandler.buildJSONError(JSONMessage.Error.INVALID_ACTION);
+                player.send(json);
+            } else {
+                String json = JSONHandler.buildJSONPlaceClient(changed.getPlayer(), getBoard().getPlacedTokens(),
+                        changed.getSource(), changed.getNeighbours());
+                player.send(json);
 
-            respond();
+                respond();
+            }
         }
     }
 
     @Override
     public void pass(Player player) {
         PassAction a = new PassAction(playerColor);
-        ChangedAction changed = getBoard().submit(a);
-        if (changed == null) {
-            String json = JSONHandler.buildJSONError(JSONMessage.Error.INVALID_ACTION);
-            player.send(json);
-        } else {
-            String json = JSONHandler.buildJSONPassClient(playerColor);
-            player.send(json);
+        synchronized (actionLock) {
+            ChangedAction changed = getBoard().submit(a);
+            if (changed == null) {
+                String json = JSONHandler.buildJSONError(JSONMessage.Error.INVALID_ACTION);
+                player.send(json);
+            } else {
+                String json = JSONHandler.buildJSONPassClient(playerColor);
+                player.send(json);
 
-            respond();
+                respond();
+            }
         }
     }
 
