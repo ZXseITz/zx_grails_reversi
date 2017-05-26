@@ -54,17 +54,17 @@ function Game() {
         }));
     };
 
-    this.pass = function (color) {
-        alert(`${color === 1 ? "White" : "Black"} has passed`);
-    };
-
-    this.end = function (win) {
-        if (win > -2) alert(win > 0 ? "Victory" : (win < 0 ? "Defeat" : "Remis"));
-    };
-
     this.updatePlacedTokens = function (placed) {
         $("#whites").text(`${placed['white']}`);
         $("#blacks").text(`${placed['black']}`);
+    };
+
+    this.pass = function (color) {
+        this.showInfo(`${color === 1 ? "White" : "Black"} has passed`);
+    };
+
+    this.end = function (win) {
+        this.showInfo(win > 0 ? "Victory" : (win < 0 ? "Defeat" : "Remis"));
     };
 
     this.showInfo = function(text) {
@@ -73,21 +73,26 @@ function Game() {
         info.fadeIn(500).css("display", "table");
         setTimeout(function() {
             info.fadeOut(500);
-        }, 3000)
+        }, 2000)
     };
 
     this.error = function (code) {
         TokenHandler.resetToken($(".token"));
         switch (code) {
             case COM.ERROR.GENERAL_ERROR:
+                this.showInfo("General error");
                 break;
             case COM.ERROR.CONNECTION_ERROR:
+                this.showInfo("Connection error");
                 break;
             case COM.ERROR.INVALID_GAME:
+                this.showInfo("Error:<br>Invalid game");
                 break;
             case COM.ERROR.INVALID_ACTION:
+                this.showInfo("Error:<br>Invalid action");
                 break;
             case  COM.ERROR.OPPONENT_DISCONNECTED:
+                this.showInfo("Error<br>Opponent has disconnected");
                 break;
         }
     }

@@ -40,7 +40,6 @@ function Connection(game) {
                     game.place(json.data["color"], json.data["source"], json.data["changes"]);
                     game.updatePlacedTokens(json.data["placed"]);
                     game.enableSelection(json.data["selection"], json.data["pass"]);
-                    game.end(json.data["win"]);
                     break;
                 case COM.SERVER_PASS_CLIENT:
                     game.pass(json.data["color"]);
@@ -48,7 +47,6 @@ function Connection(game) {
                 case COM.SERVER_PASS_OPPONENT:
                     game.pass(json.data["color"]);
                     game.enableSelection(json.data["selection"], json.data["pass"]);
-                    game.end(json.data["win"]);
                     break;
                 case COM.SERVER_END:
                     game.end(json.data["win"]);

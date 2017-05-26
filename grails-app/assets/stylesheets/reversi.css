@@ -15,13 +15,13 @@
 #info {
     position: absolute;
     width: 150px;
-    height: 100px;
+    height: 80px;
     padding: 2px;
-    left: 125px;
-    top: 150px;
+    left: 130px;
+    top: 165px;
     background: #ddddff;
     border: 1px solid black;
-    border-radius: 5px;
+    border-radius: 10px;
 
     overflow: hidden;
     display: none;
