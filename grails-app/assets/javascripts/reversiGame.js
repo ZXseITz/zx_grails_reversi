@@ -65,5 +65,21 @@ function Game() {
     this.updatePlacedTokens = function (placed) {
         $("#whites").text(`${placed['white']}`);
         $("#blacks").text(`${placed['black']}`);
+    };
+
+    this.error = function (code) {
+        TokenHandler.resetToken($(".TOKEN"));
+        switch (code) {
+            case COM.ERROR.GENERAL_ERROR:
+                break;
+            case COM.ERROR.CONNECTION_ERROR:
+                break;
+            case COM.ERROR.INVALID_GAME:
+                break;
+            case COM.ERROR.INVALID_ACTION:
+                break;
+            case  COM.ERROR.OPPONENT_DISCONNECTED:
+                break;
+        }
     }
 }

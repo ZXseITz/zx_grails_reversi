@@ -29,6 +29,9 @@ function Connection(game) {
                     game.setUp(json.data["color"], json.data["selection"]);
                     game.updatePlacedTokens(json.data["placed"]);
                     break;
+                case COM.SERVER_ERROR:
+                    game.error(json.data["error"]);
+                    break;
                 case COM.SERVER_PLACE_CLIENT:
                     game.place(json.data["color"], json.data["source"], json.data["changes"]);
                     game.updatePlacedTokens(json.data["placed"]);
