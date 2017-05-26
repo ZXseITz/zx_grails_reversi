@@ -52,7 +52,7 @@
                     r="${r}"
                     cx="${u * a + a / 2}"
                     cy="${v * b + b / 2}"
-                    class="TOKEN"
+                    class="token"
                     data-selectable="0"
                     data-u="${u}"
                     data-v="${v}"
@@ -86,6 +86,12 @@
     </select>
     <br>
     <button type="button" onclick="userAction.newGame()">new game</button>
+</div>
+
+<div id="info">
+    <div id="infocell">
+        <div id="infotext"></div>
+    </div>
 </div>
 </body>
 </html>

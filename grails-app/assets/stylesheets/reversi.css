@@ -2,7 +2,7 @@
     background: forestgreen;
 }
 
-.TOKEN {
+.token {
     fill: forestgreen;
     border: none;
 }
@@ -10,4 +10,28 @@
 .grid {
     stroke: black;
     stroke-width: 1px;
+}
+
+#info {
+    position: absolute;
+    width: 150px;
+    height: 100px;
+    padding: 2px;
+    left: 125px;
+    top: 150px;
+    background: #ddddff;
+    border: 1px solid black;
+    border-radius: 5px;
+
+    overflow: hidden;
+    display: none;
+}
+
+#infocell {
+    display: table-cell;
+    vertical-align: middle;
+}
+
+#infotext {
+    text-align: center;
 }

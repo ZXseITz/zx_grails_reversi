@@ -15,7 +15,7 @@ function Game() {
     };
 
     this.setUpUI = function () {
-        TokenHandler.resetToken($(".TOKEN"));
+        TokenHandler.resetToken($(".token"));
     };
 
     this.setUp = function (color, selectables) {
@@ -25,6 +25,7 @@ function Game() {
         TokenHandler.setColor($('#t34'), TokenHandler.BLACK.value);
         TokenHandler.setColor($('#t43'), TokenHandler.BLACK.value);
         this.enableSelection(selectables, 0);
+        this.showInfo("new game started");
     };
 
     this.enableSelection = function(selectables, pass) {
@@ -48,7 +49,7 @@ function Game() {
     };
 
     this.disableSelection = function () {
-        TokenHandler.disableSelection($('.TOKEN').filter(function () {
+        TokenHandler.disableSelection($('.token').filter(function () {
             return TokenHandler.validate(this);
         }));
     };
@@ -66,8 +67,17 @@ function Game() {
         $("#blacks").text(`${placed['black']}`);
     };
 
+    this.showInfo = function(text) {
+        $("#infotext").html(text);
+        const info = $("#info");
+        info.fadeIn(500).css("display", "table");
+        setTimeout(function() {
+            info.fadeOut(500);
+        }, 3000)
+    };
+
     this.error = function (code) {
-        TokenHandler.resetToken($(".TOKEN"));
+        TokenHandler.resetToken($(".token"));
         switch (code) {
             case COM.ERROR.GENERAL_ERROR:
                 break;
