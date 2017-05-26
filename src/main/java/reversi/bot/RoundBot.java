@@ -42,8 +42,6 @@ public class RoundBot extends Round {
 
     @Override
     public void start() {
-        player.setRound(this);
-
         Token[] selection = getSelection(getBoard(), playerColor);
         String json = JSONHandler.buildJsonInit(playerColor, getBoard().getPlacedTokens(), selection);
         player.send(json);
@@ -126,7 +124,10 @@ public class RoundBot extends Round {
     private void sendEnding() {
         int win = getBoard().winner(playerColor);
         String json = JSONHandler.buildJSONEnd(win);
-        player.send(json);
-        player.setRound(null);
+        synchronized (player) {
+            player.send(json);
+            player.setRound(null);
+            player.setState(Player.State.ONLINE);
+        }
     }
 }

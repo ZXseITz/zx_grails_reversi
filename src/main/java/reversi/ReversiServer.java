@@ -58,7 +58,11 @@ public class ReversiServer implements ServletContextListener {
 
     @OnOpen
     public void onOpen(Session client) {
-        users.putIfAbsent(client.getId(), new Player(client));
+        Player player = new Player(client);
+        synchronized (player) {
+            player.setState(Player.State.ONLINE);
+        }
+        users.putIfAbsent(client.getId(), player);
         System.out.println("Player " + client.getId() + " has joined");
     }
 
@@ -68,14 +72,14 @@ public class ReversiServer implements ServletContextListener {
 //        if (p.isInRound()) rounds.remove(p.getRound().getId());
 
         Player player = users.get(client.getId());
-        //TODO synchronize with pvp
-        if (! player.isInRound()) {
-            pvp.removeFromMatching(player);
-        } else {
-            Round round = player.getRound();
-            if(round instanceof RoundPVP) {
-                ((RoundPVP) round).disconnect(player);
+        synchronized (player) {
+            if (player.getState() == Player.State.INGAME) {
+                Round round = player.getRound();
+                if(round instanceof RoundPVP) {
+                    ((RoundPVP) round).disconnect(player);
+                }
             }
+            player.setState(Player.State.OFFLINE);
         }
         users.remove(client.getId());
         System.out.println("Player " + client.getId() + " has left");
@@ -101,11 +105,15 @@ public class ReversiServer implements ServletContextListener {
                             (ct[1] == JSONMessage.GameType.BOT || ct[1] == JSONMessage.GameType.PVP)) {
                         if (ct[1] == JSONMessage.GameType.BOT) {
                             //bot game
-                            Board board = new Board();
-                            board.setUpBoard();
-                            Bot bot = new Bot(Token.getOpposite(playerColor));
-                            Round round = new RoundBot(board, player, playerColor, bot);
-                            round.start();
+                            synchronized (player) {
+                                Board board = new Board();
+                                board.setUpBoard();
+                                Bot bot = new Bot(Token.getOpposite(playerColor));
+                                Round round = new RoundBot(board, player, playerColor, bot);
+                                player.setRound(round);
+                                player.setState(Player.State.INGAME);
+                                round.start();
+                            }
                         } else {
                             //pvp
                             pvp.waitForMatching(player, playerColor);
@@ -118,7 +126,7 @@ public class ReversiServer implements ServletContextListener {
                 case JSONMessage.CLIENT_PLACE: {
                     Player player = users.get(client.getId());
                     int[] xy = JSONHandler.getXYfromJSON(json.getAsJsonObject("data"));
-                    if (!player.isInRound()) {
+                    if (player.getState() != Player.State.INGAME) {
                         String error = JSONHandler.buildJSONError(JSONMessage.Error.INVALID_GAME);
                         player.send(error);
                     } else {
@@ -128,7 +136,7 @@ public class ReversiServer implements ServletContextListener {
                 }
                 case JSONMessage.CLIENT_PASS: {
                     Player player = users.get(client.getId());
-                    if (!player.isInRound()) {
+                    if (player.getState() != Player.State.INGAME) {
                         String error = JSONHandler.buildJSONError(JSONMessage.Error.INVALID_GAME);
                         player.send(error);
                     } else {

@@ -45,13 +45,15 @@ public class RoundPVP extends Round {
         Player opponent = getOpponent(player);
         String json = JSONHandler.buildJSONError(JSONMessage.Error.OPPONENT_DISCONNECTED);
         opponent.send(json);
-        opponent.setRound(null);
+        synchronized (opponent) {
+            opponent.setRound(null);
+            opponent.setState(Player.State.ONLINE);
+        }
     }
 
     @Override
     public void start() {
         players.keySet().forEach(player -> {
-            player.setRound(this);
             Token[] selection = getSelection(getBoard(), getColor(player));
             String json = JSONHandler.buildJsonInit(getColor(player), getBoard().getPlacedTokens(), selection);
             player.send(json);
@@ -72,11 +74,14 @@ public class RoundPVP extends Round {
             player.send(json);
 
             Player opponent = getOpponent(player);
-            Token[] selection = getSelection(board, getColor(opponent));
-            String json2 = JSONHandler.buildJSONPlaceOpponent(changed.getPlayer(), board.getPlacedTokens(),
-                    changed.getSource(), changed.getNeighbours(), selection, !board.isFinished() ? 1 : 0);
-            opponent.send(json2);
-
+            synchronized (opponent) {
+                if (opponent.getState() == Player.State.INGAME) {
+                    Token[] selection = getSelection(board, getColor(opponent));
+                    String json2 = JSONHandler.buildJSONPlaceOpponent(changed.getPlayer(), board.getPlacedTokens(),
+                            changed.getSource(), changed.getNeighbours(), selection, !board.isFinished() ? 1 : 0);
+                    opponent.send(json2);
+                }
+            }
             if (board.isFinished()) {
                 sendEnding();
             }
@@ -96,10 +101,14 @@ public class RoundPVP extends Round {
             player.send(json);
 
             Player opponent = getOpponent(player);
-            Token[] selection = getSelection(board, getColor(opponent));
-            String json2 = JSONHandler.buildJSONPassOpponent(changed.getPlayer(), selection,
-                    !board.isFinished() ? 1 : 0);
-            opponent.send(json2);
+            synchronized (opponent) {
+                if (opponent.getState() == Player.State.INGAME) {
+                    Token[] selection = getSelection(board, getColor(opponent));
+                    String json2 = JSONHandler.buildJSONPassOpponent(changed.getPlayer(), selection,
+                            !board.isFinished() ? 1 : 0);
+                    opponent.send(json2);
+                }
+            }
 
             if (board.isFinished()) {
                 sendEnding();
@@ -111,8 +120,13 @@ public class RoundPVP extends Round {
         players.keySet().forEach(player -> {
             int win = getBoard().winner(getColor(player));
             String json = JSONHandler.buildJSONEnd(win);
-            player.send(json);
-            player.setRound(null);
+            synchronized (player) {
+                if (player.getState() == Player.State.INGAME) {
+                    player.send(json);
+                    player.setRound(null);
+                    player.setState(Player.State.ONLINE);
+                }
+            }
         });
     }
 }

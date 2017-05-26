@@ -31,20 +31,43 @@ public class PVP {
         matcher.start();
     }
 
-    public void removeFromMatching(Player player) {
-        pvpWhite.remove(player);
-        pvpBlack.remove(player);
+    public void waitForMatching(Player player, Token.Color playerColor) {
+        synchronized (player) {
+            if (player.getState() == Player.State.INGAME) {
+                if (player.getRound() instanceof RoundPVP){
+                    ((RoundPVP) player.getRound()).disconnect(player);
+                }
+                add(player, playerColor);
+            } else if (player.getState() == Player.State.ONLINE) {
+                add(player, playerColor);
+            }
+        }
     }
 
-    public void waitForMatching(Player player, Token.Color playerColor) {
+    private void add(Player player, Token.Color playerColor) {
         if (playerColor == Token.Color.WHITE) pvpWhite.add(player);
         else pvpBlack.add(player);
+        player.setState(Player.State.WAITING);
     }
 
     private void startPVP(Player white, Player black) {
-        Board board = new Board();
-        board.setUpBoard();
-        Round round = new RoundPVP(board, white, black);
-        round.start();
+        synchronized (white) {
+            synchronized (black) {
+                if (white.getState() == Player.State.WAITING && black.getState() == Player.State.WAITING) {
+                    Board board = new Board();
+                    board.setUpBoard();
+                    Round round = new RoundPVP(board, white, black);
+                    white.setRound(round);
+                    white.setState(Player.State.INGAME);
+                    black.setRound(round);
+                    black.setState(Player.State.INGAME);
+                    round.start();
+                } else if(white.getState() == Player.State.OFFLINE) {
+                    pvpBlack.add(black);
+                } else if(black.getState() == Player.State.OFFLINE) {
+                    pvpWhite.add(white);
+                }
+            }
+        }
     }
 }
