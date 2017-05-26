@@ -38,7 +38,7 @@
     int GAME_PVP = 1
 %>
 <!-- game board -->
-<svg width="${width}" height="${height}" class="svg">
+<svg width="${width}" height="${height}" class="game">
 <!-- draw grid -->
     <g:each var="i" in="${0..8}">
         <line x1="0.0" y1="${i * b}" x2="${width}" y2="${i * b}" class="grid"></line>
@@ -63,41 +63,44 @@
 </svg>
 <br>
 
-<!-- ingame token counter -->
-<div>
-    <label>Withe Tokens:</label>
-    <label id="whites">0</label>
-</div>
-<div>
-    <label>Black Tokens:</label>
-    <label id="blacks">0</label>
-</div>
-
-<!-- new game user option -->
-<div>
-    <label>Select color</label>
-    <select id="gamecolor">
-        <option value="${COLOR_WHITE}" selected>white</option>
-        <option value="${COLOR_BLACK}">black</option>
-    </select>
-    <br>
-    <label>Select game type</label>
-    <select id="gametype">
-        <option value="${GAME_BOT}" selected>bot</option>
-        <option value="${GAME_PVP}">pvp</option>
-    </select>
-    <br>
-    <button type="button" onclick="userAction.newGame()">new game</button>
-</div>
-
-<!-- infobox tooltip for ingame information or error messages -->
-<div id="info">
-    <div id="infoimagecell" class="infocell">
-        <img id="infoimage" data-info="${asset.assetPath(src: 'info.png')}"
-                            data-error="${asset.assetPath(src: 'error.png')}">
+<div class="all font">
+    <!-- ingame token counter -->
+    <div class="counter">
+        <span id="white" class="counterlabel left white">0</span>
+        <span id="black" class="counterlabel right black">0</span>
     </div>
-    <div class="infocell">
-        <div id="infotext"></div>
+    <br>
+    <!-- new game user option -->
+    <div id="newgame" align="center" class="box">
+        <div>
+            <label for="gamecolor" class="left">Select color</label>
+            <select id="gamecolor" class="combobox font right">
+            <option value="${COLOR_WHITE}" selected>white</option>
+            <option value="${COLOR_BLACK}" class="black">black</option>
+        </select>
+        </div>
+        <div>
+            <label for="gametype" class="left">Select game type</label>
+            <select id="gametype" class="combobox font right">
+            <option value="${GAME_BOT}" selected>bot</option>
+            <option value="${GAME_PVP}">pvp</option>
+        </select>
+        </div>
+        <div>
+            <button type="button" class="newgamebutton font" onclick="userAction.newGame()">new game</button>
+        </div>
+    </div>
+
+    <!-- infobox tooltip for ingame information or error messages -->
+    <div id="info" class="box">
+        <div id="infoimagecell" class="infocell">
+            <img id="infoimage" src="" data-info="${asset.assetPath(src: 'info.png')}"
+                 data-error="${asset.assetPath(src: 'error.png')}">
+        </div>
+
+        <div class="infocell">
+            <div id="infotext"></div>
+        </div>
     </div>
 </div>
 

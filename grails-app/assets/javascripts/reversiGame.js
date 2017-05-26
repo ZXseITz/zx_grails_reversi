@@ -55,8 +55,8 @@ function Game() {
     };
 
     this.updatePlacedTokens = function (placed) {
-        $("#whites").text(`${placed['white']}`);
-        $("#blacks").text(`${placed['black']}`);
+        $("#white").html(`${placed['white']}`);
+        $("#black").html(`${placed['black']}`);
     };
 
     this.pass = function (color) {
