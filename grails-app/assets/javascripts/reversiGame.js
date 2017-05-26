@@ -16,15 +16,14 @@ function Game() {
 
     this.setUpUI = function () {
         TokenHandler.resetToken($(".TOKEN"));
-
-        TokenHandler.setColor($('#t33'), TokenHandler.WHITE.value);
-        TokenHandler.setColor($('#t44'), TokenHandler.WHITE.value);
-        TokenHandler.setColor($('#t34'), TokenHandler.BLACK.value);
-        TokenHandler.setColor($('#t43'), TokenHandler.BLACK.value);
     };
 
     this.setUp = function (color, selectables) {
         playerColor = color;
+        TokenHandler.setColor($('#t33'), TokenHandler.WHITE.value);
+        TokenHandler.setColor($('#t44'), TokenHandler.WHITE.value);
+        TokenHandler.setColor($('#t34'), TokenHandler.BLACK.value);
+        TokenHandler.setColor($('#t43'), TokenHandler.BLACK.value);
         this.enableSelection(selectables, 0);
     };
 
