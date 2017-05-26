@@ -14,11 +14,11 @@
 
 #info {
     position: absolute;
-    width: 150px;
-    height: 80px;
+    width: 180px;
+    height: 60px;
     padding: 2px;
-    left: 130px;
-    top: 165px;
+    left: 115px;
+    top: 175px;
     background: #ddddff;
     border: 1px solid black;
     border-radius: 10px;
@@ -27,9 +27,20 @@
     display: none;
 }
 
-#infocell {
-    display: table-cell;
-    vertical-align: middle;
+.infocell {
+     display: table-cell;
+     vertical-align: middle;
+}
+
+#infoimagecell {
+    width: 40px;
+}
+
+#infoimage {
+    margin: 5px;
+    width: 30px;
+    height: 30px;
+    text-align: left;
 }
 
 #infotext {

@@ -25,7 +25,7 @@ function Game() {
         TokenHandler.setColor($('#t34'), TokenHandler.BLACK.value);
         TokenHandler.setColor($('#t43'), TokenHandler.BLACK.value);
         this.enableSelection(selectables, 0);
-        this.showInfo("new game started");
+        this.showInfo("new game started", "info");
     };
 
     this.enableSelection = function(selectables, pass) {
@@ -60,14 +60,15 @@ function Game() {
     };
 
     this.pass = function (color) {
-        this.showInfo(`${color === 1 ? "White" : "Black"} has passed`);
+        this.showInfo(`${color === 1 ? "White" : "Black"} has passed`, "info");
     };
 
     this.end = function (win) {
-        this.showInfo(win > 0 ? "Victory" : (win < 0 ? "Defeat" : "Remis"));
+        this.showInfo(win > 0 ? "Victory" : (win < 0 ? "Defeat" : "Remis"), "info");
     };
 
-    this.showInfo = function(text) {
+    this.showInfo = function(text, type) {
+        $("#infoimage").attr("src", `${$("#infoimage").data(type)}`);
         $("#infotext").html(text);
         const info = $("#info");
         info.fadeIn(500).css("display", "table");
@@ -80,19 +81,19 @@ function Game() {
         TokenHandler.resetToken($(".token"));
         switch (code) {
             case COM.ERROR.GENERAL_ERROR:
-                this.showInfo("General error");
+                this.showInfo("General error", "error");
                 break;
             case COM.ERROR.CONNECTION_ERROR:
-                this.showInfo("Connection error");
+                this.showInfo("Connection error", "error");
                 break;
             case COM.ERROR.INVALID_GAME:
-                this.showInfo("Error:<br>Invalid game");
+                this.showInfo("nvalid game", "error");
                 break;
             case COM.ERROR.INVALID_ACTION:
-                this.showInfo("Error:<br>Invalid action");
+                this.showInfo("Invalid action", "error");
                 break;
             case  COM.ERROR.OPPONENT_DISCONNECTED:
-                this.showInfo("Error<br>Opponent has disconnected");
+                this.showInfo("Opponent has disconnected", "error");
                 break;
         }
     }

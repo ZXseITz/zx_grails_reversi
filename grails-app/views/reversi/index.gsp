@@ -37,6 +37,7 @@
     int GAME_BOT = 0
     int GAME_PVP = 1
 %>
+<!-- game board -->
 <svg width="${width}" height="${height}" class="svg">
 <!-- draw grid -->
     <g:each var="i" in="${0..8}">
@@ -62,16 +63,17 @@
 </svg>
 <br>
 
+<!-- ingame token counter -->
 <div>
     <label>Withe Tokens:</label>
     <label id="whites">0</label>
 </div>
-
 <div>
     <label>Black Tokens:</label>
     <label id="blacks">0</label>
 </div>
 
+<!-- new game user option -->
 <div>
     <label>Select color</label>
     <select id="gamecolor">
@@ -88,10 +90,16 @@
     <button type="button" onclick="userAction.newGame()">new game</button>
 </div>
 
+<!-- infobox tooltip for ingame information or error messages -->
 <div id="info">
-    <div id="infocell">
+    <div id="infoimagecell" class="infocell">
+        <img id="infoimage" data-info="${asset.assetPath(src: 'info.png')}"
+                            data-error="${asset.assetPath(src: 'error.png')}">
+    </div>
+    <div class="infocell">
         <div id="infotext"></div>
     </div>
 </div>
+
 </body>
 </html>
