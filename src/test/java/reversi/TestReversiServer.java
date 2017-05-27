@@ -1,16 +1,16 @@
 package reversi;
 
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Matchers;
 import org.mockito.Mockito;
 import reversi.bot.RoundBot;
 import reversi.game.Player;
 import reversi.game.Round;
+import reversi.game.Token;
 import reversi.json.JSONHandler;
 import reversi.json.JSONMessage;
+import reversi.pvp.PVP;
 import reversi.pvp.RoundPVP;
 
 import javax.websocket.Session;
@@ -21,11 +21,15 @@ import javax.websocket.Session;
 public class TestReversiServer {
     private Session client;
     private Player player;
+    private PVP pvp;
     private ReversiServer server;
 
     @Before
     public void setup() {
         String id = "0";
+
+        pvp = Mockito.mock(PVP.class);
+        Mockito.when(pvp.waitForMatching(Mockito.any(Player.class), Mockito.any(Token.Color.class))).thenReturn(true);
 
         client = Mockito.mock(Session.class);
         Mockito.when(client.getId()).thenReturn(id);
@@ -37,7 +41,7 @@ public class TestReversiServer {
         Mockito.when(player.getRound()).thenCallRealMethod();
         Mockito.doCallRealMethod().when(player).setRound(Mockito.any(Round.class));
 
-        server = new ReversiServer();
+        server = new ReversiServer(pvp);
     }
 
     @Test
@@ -88,6 +92,16 @@ public class TestReversiServer {
     }
 
     @Test
+    public void testOnMessageNewPvpgame() {
+        Mockito.doNothing().when(player).send(Mockito.anyString());
+        server.getUsers().putIfAbsent(player.getID(), player);
+        String message = "{\"type\":0,\"data\":{\"color\":2,\"gameType\":1}}";
+
+        server.onMessage(message, client);
+        Mockito.verify(pvp).waitForMatching(Mockito.eq(player), Mockito.any(Token.Color.class));
+    }
+
+    @Test
     public void testOnMessageNewgameInvalid() {
         Mockito.doNothing().when(player).send(Mockito.anyString());
         server.getUsers().putIfAbsent(player.getID(), player);
@@ -99,9 +113,8 @@ public class TestReversiServer {
         Assert.assertNull(player.getRound());
         Assert.assertEquals(Player.State.ONLINE, player.getState());
         Mockito.verify(player, Mockito.never()).send(Mockito.anyString());
+        Mockito.verify(pvp, Mockito.never()).waitForMatching(Mockito.any(Player.class), Mockito.any(Token.Color.class));
     }
-
-
 
     @Test
     public void testOnMessagePlaceValid() {

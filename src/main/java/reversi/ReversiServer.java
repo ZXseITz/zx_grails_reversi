@@ -30,13 +30,11 @@ public class ReversiServer implements ServletContextListener {
     private final JsonParser gParser;
     private final Map<String, Player> users;
     private final PVP pvp;
-//    private Map<Integer, Round> rounds;
 
-    public ReversiServer() {
+    public ReversiServer(PVP pvp) {
         gParser = new JsonParser();
-        pvp = new PVP();
         users = new ConcurrentHashMap<>();
-//        rounds = new ConcurrentHashMap<>();
+        this.pvp = pvp;
     }
 
     public Map<String, Player> getUsers() {
@@ -72,8 +70,6 @@ public class ReversiServer implements ServletContextListener {
 
     @OnClose
     public void onClose(Session client) {
-//        Player p = users.get(client.getId());
-//        if (p.isInRound()) rounds.remove(p.getRound().getId());
 
         Player player = users.get(client.getId());
         synchronized (player) {
@@ -97,7 +93,6 @@ public class ReversiServer implements ServletContextListener {
     @OnMessage
     public void onMessage(String message, Session client) {
         try {
-//            System.out.println("Player " + client.getId() + " send:" + message);
             JsonObject json = gParser.parse(message).getAsJsonObject();
             int type = json.get("type").getAsInt();
             switch (type) {
@@ -123,8 +118,6 @@ public class ReversiServer implements ServletContextListener {
                             pvp.waitForMatching(player, playerColor);
                         }
                     }
-//                    rounds.putIfAbsent(r.getId(), r);
-//                    System.out.println("send to Player " + client.getId() + " json " + json);
                     break;
                 }
                 case JSONMessage.CLIENT_PLACE: {
