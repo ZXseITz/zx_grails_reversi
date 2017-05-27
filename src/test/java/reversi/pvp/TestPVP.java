@@ -8,6 +8,8 @@ import reversi.game.Player;
 import reversi.game.Round;
 import reversi.game.Token;
 
+import static java.lang.Thread.sleep;
+
 /**
  * Created by Claudio on 27.05.2017.
  */
@@ -22,12 +24,14 @@ public class TestPVP {
         Mockito.doCallRealMethod().when(player).setState(Mockito.any(Player.State.class));
         Mockito.when(player.getRound()).thenCallRealMethod();
         Mockito.doCallRealMethod().when(player).setRound(Mockito.any(Round.class));
+        Mockito.doNothing().when(player).send(Mockito.anyString());
 
         player2 = Mockito.mock(Player.class);
         Mockito.when(player2.getState()).thenCallRealMethod();
         Mockito.doCallRealMethod().when(player2).setState(Mockito.any(Player.State.class));
         Mockito.when(player2.getRound()).thenCallRealMethod();
         Mockito.doCallRealMethod().when(player2).setRound(Mockito.any(Round.class));
+        Mockito.doNothing().when(player2).send(Mockito.anyString());
 
         pvp = new PVP();
     }
@@ -71,5 +75,56 @@ public class TestPVP {
         Assert.assertNull(player2.getRound());
         Assert.assertFalse(pvp.waitForMatching(player, Token.Color.WHITE));
         Assert.assertFalse(pvp.waitForMatching(player, Token.Color.BLACK));
+    }
+
+    @Test
+    public void testMatchingOnline() {
+        player.setState(Player.State.ONLINE);
+        player2.setState(Player.State.ONLINE);
+
+        Assert.assertTrue(pvp.waitForMatching(player, Token.Color.WHITE));
+        Assert.assertTrue(pvp.waitForMatching(player2, Token.Color.BLACK));
+
+        try {
+            sleep(200);
+        } catch (InterruptedException e) {
+            //ignore
+        }
+
+        // check other thread
+        Assert.assertEquals(Player.State.INGAME, player.getState());
+        Assert.assertEquals(Player.State.INGAME, player2.getState());
+        Assert.assertTrue(player.getRound() instanceof RoundPVP);
+        Assert.assertSame(player.getRound(), player2.getRound());
+        // check if round.start() was called
+        Mockito.verify(player).send(Mockito.anyString());
+        Mockito.verify(player2).send(Mockito.anyString());
+    }
+
+    @Test
+    public void testMatchingOffline() {
+        player.setState(Player.State.ONLINE);
+        player.setRound(null);
+        player2.setState(Player.State.ONLINE);
+        player2.setRound(null);
+
+        Assert.assertTrue(pvp.waitForMatching(player, Token.Color.WHITE));
+        player.setState(Player.State.OFFLINE);
+        Assert.assertTrue(pvp.waitForMatching(player2, Token.Color.BLACK));
+
+        try {
+            sleep(200);
+        } catch (InterruptedException e) {
+            //ignore
+        }
+
+        // check other thread
+        Assert.assertEquals(Player.State.OFFLINE, player.getState());
+        Assert.assertEquals(Player.State.WAITING, player2.getState());
+        Assert.assertNull(player.getRound());
+        Assert.assertNull(player.getRound());
+        // check if round.start() was not called
+        Mockito.verify(player, Mockito.never()).send(Mockito.anyString());
+        Mockito.verify(player2, Mockito.never()).send(Mockito.anyString());
     }
 }

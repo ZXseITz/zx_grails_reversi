@@ -88,6 +88,7 @@ public class TestReversiServer {
         server.onMessage(message, client);
         Assert.assertTrue(player.getRound() instanceof RoundBot);
         Assert.assertEquals(Player.State.INGAME, player.getState());
+        // check if round.start() was called
         Mockito.verify(player).send(Mockito.anyString());
     }
 
@@ -112,6 +113,7 @@ public class TestReversiServer {
         server.onMessage(message, client);
         Assert.assertNull(player.getRound());
         Assert.assertEquals(Player.State.ONLINE, player.getState());
+        // check if round.start() was not called
         Mockito.verify(player, Mockito.never()).send(Mockito.anyString());
         Mockito.verify(pvp, Mockito.never()).waitForMatching(Mockito.any(Player.class), Mockito.any(Token.Color.class));
     }
