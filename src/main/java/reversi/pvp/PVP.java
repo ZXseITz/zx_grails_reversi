@@ -19,7 +19,7 @@ public class PVP {
     public PVP() {
         pvpWhite  = new ArrayBlockingQueue<>(20);
         pvpBlack  = new ArrayBlockingQueue<>(20);
-        Thread matcher = new Thread(() -> {
+        Thread matchingThread = new Thread(() -> {
             try {
                 while (true) {
                     startPVP(pvpWhite.take(), pvpBlack.take());
@@ -28,9 +28,16 @@ public class PVP {
                 e.printStackTrace();
             }
         });
-        matcher.start();
+        matchingThread.start();
     }
 
+    /**
+     * Adds a player to a waiting queue if he is online
+     * Adds a player to a waiting queue and cancel his current game if he is ingame
+     * @param player player to add
+     * @param playerColor color, which the player wants to play
+     * @return success
+     */
     public boolean waitForMatching(Player player, Token.Color playerColor) {
         synchronized (player) {
             if (player.getState() == Player.State.INGAME) {
@@ -53,6 +60,12 @@ public class PVP {
         player.setState(Player.State.WAITING);
     }
 
+    /**
+     * Starts a new pvp round with 2 players
+     * Adds a player again to queue, if the opponent changed to offline
+     * @param white player who plays as white
+     * @param black player who plays as black
+     */
     private void startPVP(Player white, Player black) {
         synchronized (white) {
             synchronized (black) {
@@ -65,9 +78,9 @@ public class PVP {
                     black.setRound(round);
                     black.setState(Player.State.INGAME);
                     round.start();
-                } else if(white.getState() == Player.State.OFFLINE) {
+                } else if(white.getState() == Player.State.OFFLINE && black.getState() == Player.State.WAITING) {
                     pvpBlack.add(black);
-                } else if(black.getState() == Player.State.OFFLINE) {
+                } else if(black.getState() == Player.State.OFFLINE && white.getState() == Player.State.WAITING) {
                     pvpWhite.add(white);
                 }
             }
