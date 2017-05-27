@@ -67,14 +67,14 @@ public class TestReversiServer {
     public void testOnCloseIngame() {
         server.getUsers().putIfAbsent(player.getID(), player);
         RoundPVP round = Mockito.mock(RoundPVP.class);
-        Mockito.doNothing().when(round).disconnect(player);
+        Mockito.doNothing().when(round).cancel(player);
         player.setRound(round);
 
         player.setState(Player.State.INGAME);
         server.onClose(client);
         Assert.assertEquals(0, server.getUsers().size());
         Assert.assertEquals(Player.State.OFFLINE, player.getState());
-        Mockito.verify(round).disconnect(player);
+        Mockito.verify(round).cancel(player);
     }
 
     @Test

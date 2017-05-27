@@ -42,7 +42,7 @@ public class PVP {
         synchronized (player) {
             if (player.getState() == Player.State.INGAME) {
                 if (player.getRound() instanceof RoundPVP){
-                    ((RoundPVP) player.getRound()).disconnect(player);
+                    ((RoundPVP) player.getRound()).cancel(player);
                 }
                 add(player, playerColor);
                 return true;

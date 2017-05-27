@@ -64,7 +64,7 @@ public class TestPVP {
 
         RoundPVP round = Mockito.mock(RoundPVP.class);
         Mockito.when(round.getOpponent(player)).thenReturn(player2);
-        Mockito.doCallRealMethod().when(round).disconnect(Mockito.any(Player.class));
+        Mockito.doCallRealMethod().when(round).cancel(Mockito.any(Player.class));
 
         player.setRound(round);
         player2.setRound(round);

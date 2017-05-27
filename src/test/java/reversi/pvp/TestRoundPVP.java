@@ -60,7 +60,7 @@ public class TestRoundPVP {
 
     @Test
     public void testDisconnect() {
-        round.disconnect(player);
+        round.cancel(player);
         Assert.assertNull(player2.getRound());
         Assert.assertEquals(Player.State.ONLINE, player2.getState());
     }

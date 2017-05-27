@@ -97,7 +97,7 @@ public class ReversiServer implements ServletContextListener {
             if (player.getState() == Player.State.INGAME) {
                 Round round = player.getRound();
                 if(round instanceof RoundPVP) {
-                    ((RoundPVP) round).disconnect(player);
+                    ((RoundPVP) round).cancel(player);
                 }
             }
             player.setState(Player.State.OFFLINE); //mark for pvp matcher
