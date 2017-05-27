@@ -31,16 +31,19 @@ public class PVP {
         matcher.start();
     }
 
-    public void waitForMatching(Player player, Token.Color playerColor) {
+    public boolean waitForMatching(Player player, Token.Color playerColor) {
         synchronized (player) {
             if (player.getState() == Player.State.INGAME) {
                 if (player.getRound() instanceof RoundPVP){
                     ((RoundPVP) player.getRound()).disconnect(player);
                 }
                 add(player, playerColor);
+                return true;
             } else if (player.getState() == Player.State.ONLINE) {
                 add(player, playerColor);
+                return true;
             }
+            return false;
         }
     }
 
