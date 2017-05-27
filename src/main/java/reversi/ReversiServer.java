@@ -27,9 +27,9 @@ import java.util.Map;
 @WebListener
 @ServerEndpoint(value = "/reversi/room", configurator = ReversiEndPointConfig.class)
 public class ReversiServer implements ServletContextListener {
-    private JsonParser gParser;
-    private Map<String, Player> users;
-    private PVP pvp;
+    private final JsonParser gParser;
+    private final Map<String, Player> users;
+    private final PVP pvp;
 //    private Map<Integer, Round> rounds;
 
     public ReversiServer() {
@@ -37,6 +37,10 @@ public class ReversiServer implements ServletContextListener {
         pvp = new PVP();
         users = new ConcurrentHashMap<>();
 //        rounds = new ConcurrentHashMap<>();
+    }
+
+    public Map<String, Player> getUsers() {
+        return users;
     }
 
     @Override
