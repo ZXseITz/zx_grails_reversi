@@ -1,7 +1,6 @@
 package mvc;
 
 import reversi.ReversiServer;
-import reversi.pvp.PVP;
 
 import javax.websocket.server.ServerEndpointConfig;
 
@@ -9,7 +8,7 @@ import javax.websocket.server.ServerEndpointConfig;
  * Created by Claudio on 25.05.2017.
  */
 public class ReversiEndPointConfig extends ServerEndpointConfig.Configurator {
-    public static final ReversiServer reversiEndPoint = new ReversiServer(new PVP());
+    public static final ReversiServer reversiEndPoint = new ReversiServer();
 
     @Override
     public <T> T getEndpointInstance(Class<T> endpointClass) throws InstantiationException {

@@ -31,7 +31,20 @@ public class ReversiServer implements ServletContextListener {
     private final Map<String, Player> users;
     private final PVP pvp;
 
-    public ReversiServer(PVP pvp) {
+    /**
+     * Constructor for production code
+     * Cannot have any parameters, reason: grails application, configurator
+     */
+    public ReversiServer() {
+        gParser = new JsonParser();
+        users = new ConcurrentHashMap<>();
+        this.pvp = new PVP();
+    }
+
+    /**
+     * Constructor for mock testing only
+     */
+    ReversiServer(PVP pvp) {
         gParser = new JsonParser();
         users = new ConcurrentHashMap<>();
         this.pvp = pvp;
@@ -58,6 +71,10 @@ public class ReversiServer implements ServletContextListener {
 
     }
 
+    /**
+     * Adds the client as a player to users
+     * @param client joined client
+     */
     @OnOpen
     public void onOpen(Session client) {
         Player player = new Player(client);
@@ -68,9 +85,13 @@ public class ReversiServer implements ServletContextListener {
         System.out.println("Player " + client.getId() + " has joined");
     }
 
+    /**
+     * Disconnects the player and removes him from current round
+     * Sets player to offline, if he is in pvp queue
+     * @param client left client
+     */
     @OnClose
     public void onClose(Session client) {
-
         Player player = users.get(client.getId());
         synchronized (player) {
             if (player.getState() == Player.State.INGAME) {
@@ -79,7 +100,7 @@ public class ReversiServer implements ServletContextListener {
                     ((RoundPVP) round).disconnect(player);
                 }
             }
-            player.setState(Player.State.OFFLINE);
+            player.setState(Player.State.OFFLINE); //mark for pvp matcher
         }
         users.remove(client.getId());
         System.out.println("Player " + client.getId() + " has left");
@@ -90,6 +111,11 @@ public class ReversiServer implements ServletContextListener {
 
     }
 
+    /**
+     * Handles the json messages from the client
+     * @param message json message
+     * @param client sender
+     */
     @OnMessage
     public void onMessage(String message, Session client) {
         try {
@@ -143,7 +169,7 @@ public class ReversiServer implements ServletContextListener {
                 }
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            System.out.println(e.getMessage());
         }
     }
 }
