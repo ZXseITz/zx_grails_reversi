@@ -65,6 +65,10 @@ public class Board {
         void apply(Token token, Integer x, Integer y);
     }
 
+    /**
+     * Iterates over the board
+     * @param function lambda expression
+     */
     public void iterateBoard(ItBoard function) {
         for (int y = 0; y < 8; y++) {
             for (int x = 0; x < 8; x++) {
@@ -93,13 +97,22 @@ public class Board {
         return finished;
     }
 
+    /**
+     * Sets prevPassed, sets finish true if the prevPassed was already true
+     * @param prevPassed
+     */
     private void setPrevPassed(boolean prevPassed) {
         if (this.prevPassed && prevPassed) finished = true;
         this.prevPassed = prevPassed;
     }
 
+    /**
+     * Update the number of tokens for white and black
+     * @param changed number of changed tokens
+     */
     private void updatePlacedTokens(int changed) {
-        placedTokens[currentPlayer.getValue() - 1] += 1 + changed;
+        //white 1, black 2
+        placedTokens[currentPlayer.getValue() - 1] += 1 + changed; //source: +1
         placedTokens[Token.getOpposite(currentPlayer).getValue() - 1] -= changed;
         finished = placedTokens[0] + placedTokens[1] >= 64;
     }
@@ -119,19 +132,21 @@ public class Board {
         get(4, 3).setColor(Token.Color.BLACK);
         placedTokens[0] = 2;
         placedTokens[1] = 2;
+        currentPlayer = Token.Color.WHITE;
+        prevPassed = false;
+        finished = false;
     }
 
     /**
-     * Returns a list of tokens which are valid tokens to be set by the player with color c
-     *
-     * @param c color of player
+     * Returns a list of tokens which can be selected by player
+     * @param color color of player
      * @return List of all selectable tokens
      */
-    public List<Token> getSelectableTokens(Token.Color c) {
+    public List<Token> getSelectableTokens(Token.Color color) {
         List<Token> selectables = new ArrayList<>(20);
-        if (!isFinished() && c == getCurrentPlayer()) {
+        if (!isFinished() && color == getCurrentPlayer()) {
             iterateBoard((token, x, y) -> {
-                if (!token.isPlaced() && validatePlacing(token, c)) {
+                if (!token.isPlaced() && validatePlacing(token, color)) {
                     selectables.add(token);
                 }
             });
@@ -140,10 +155,9 @@ public class Board {
     }
 
     /**
-     * Validates the placing turn
-     *
-     * @param source token to place
-     * @param player player on turn
+     * Validates placing
+     * @param source new placed token
+     * @param player color of actor
      * @return validation
      */
     private boolean validatePlacing(Token source, Token.Color player) {
@@ -165,6 +179,11 @@ public class Board {
         return false;
     }
 
+    /**1
+     * Validates passing
+     * @param player color of actor
+     * @return validation
+     */
     private boolean validatePassing(Token.Color player) {
         for (int y = 0; y < 8; y++) {
             for (int x = 0; x < 8; x++) {
@@ -176,6 +195,13 @@ public class Board {
         return true;
     }
 
+    /**
+     * Detects all neighbours between the source token and another token with the same color as the source token,
+     * all token between must have to opposite color
+     * @param source token
+     * @param player color of actor
+     * @return list of detected neighbours
+     */
     public List<Token> detectNeighbours(Token source, Token.Color player) {
         List<Token> tokenToChange = new ArrayList<>(20);
         Token[] tokenLine = new Token[8];
@@ -196,11 +222,16 @@ public class Board {
         return tokenToChange;
     }
 
-    public int winner(Token.Color c) {
+    /**
+     * Returns if a player has won, lost or tie
+     * @param color color of actor
+     * @return 1 victory, 0 tie, -1 defeat
+     */
+    public int winner(Token.Color color) {
         int w = winner();
         if (w == 0) return 0;
         else {
-            if ((c == Token.Color.WHITE && w > 0) || (c == Token.Color.BLACK && w < 0)) return 1;
+            if ((color == Token.Color.WHITE && w > 0) || (color == Token.Color.BLACK && w < 0)) return 1;
             else return -1;
         }
     }
@@ -211,38 +242,48 @@ public class Board {
         return array[0] - array[1];
     }
 
-    public List<Action> getPossibleActions(Token.Color c) {
+    /**
+     * Returns all possible actions
+     * @param color color of actor
+     * @return list of possible actions
+     */
+    public List<Action> getPossibleActions(Token.Color color) {
         List<Action> actions = new ArrayList<>(30);
         if (!isFinished()) {
             iterateBoard((token, x, y) -> {
-                if (!token.isPlaced() && validatePlacing(token, c)) {
-                    actions.add(new PlacingAction(c, x, y));
+                if (!token.isPlaced() && validatePlacing(token, color)) {
+                    actions.add(new PlacingAction(color, x, y));
                 }
             });
-            if (actions.isEmpty()) actions.add(new PassAction(c));
-            return actions;
-        }
-        return null;
-    }
-
-    public List<Action> getMostProbablyActions(Token.Color c) {
-        List<Action> actions = new ArrayList<>(30);
-        if (!isFinished()) {
-            iterateBoard((token, x, y) -> {
-                if (!token.isPlaced() && validatePlacing(token, c)) {
-                    for (int i = 0; i < probability[y][x]; i++) {
-                        actions.add(new PlacingAction(c, x, y));
-                    }
-                }
-            });
-            if (actions.isEmpty()) actions.add(new PassAction(c));
+            if (actions.isEmpty()) actions.add(new PassAction(color));
             return actions;
         }
         return null;
     }
 
     /**
-     * Checks and executes the incoming action
+     * Returns the possible actions, but the most likely actions are added multiple times
+     * @param color color of actor
+     * @return list of most likely actions
+     */
+    public List<Action> getMostLikelyActions(Token.Color color) {
+        List<Action> actions = new ArrayList<>(30);
+        if (!isFinished()) {
+            iterateBoard((token, x, y) -> {
+                if (!token.isPlaced() && validatePlacing(token, color)) {
+                    for (int i = 0; i < probability[y][x]; i++) {
+                        actions.add(new PlacingAction(color, x, y));
+                    }
+                }
+            });
+            if (actions.isEmpty()) actions.add(new PassAction(color));
+            return actions;
+        }
+        return null;
+    }
+
+    /**
+     * Checks and executes an incoming action
      */
     public ChangedAction submit(Action a) {
         if (a instanceof PlacingAction) {

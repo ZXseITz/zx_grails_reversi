@@ -30,10 +30,6 @@ public class Player {
         return round;
     }
 
-//    public boolean isInRound() {
-//        return round != null;
-//    }
-
     public void setRound(Round round) {
         this.round = round;
     }
@@ -46,6 +42,10 @@ public class Player {
         this.state = state;
     }
 
+    /**
+     * Sends a message to the client
+     * @param json message
+     */
     public void send(String json) {
         try {
             session.getBasicRemote().sendText(json);
@@ -54,6 +54,9 @@ public class Player {
         }
     }
 
+    /**
+     * Kicks the player
+     */
     public void disconnect() {
         try {
             session.close();

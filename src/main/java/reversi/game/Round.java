@@ -1,8 +1,5 @@
 package reversi.game;
 
-import reversi.bot.Bot;
-import reversi.json.JSONHandler;
-
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -14,7 +11,7 @@ public abstract class Round {
 
     private int id;
     private volatile Board board;
-    protected final Object actionLock;
+    protected final Object actionLock; //used for single action on each round
 
     public Round(Board board) {
         this.id = counter.getAndIncrement();

@@ -30,6 +30,11 @@ public class Token {
         else return Color.UNDEFINED;
     }
 
+    /**
+     * Returns black, if color is white, returns white, if color is black, returns undef otherwise
+     * @param color original color
+     * @return opposite color
+     */
     public static Color getOpposite(Color color) {
         if (color == Color.WHITE) return Color.BLACK;
         else if (color == Color.BLACK) return Color.WHITE;
