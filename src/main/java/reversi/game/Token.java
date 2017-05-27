@@ -100,4 +100,13 @@ public class Token {
     public String toString() {
         return u + ", " + v + ", " + color;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Token token = (Token) o;
+        return color == token.color && u == token.u && v == token.v;
+    }
 }
