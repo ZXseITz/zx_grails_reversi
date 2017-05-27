@@ -13,32 +13,38 @@ import java.util.concurrent.*;
 public class Sounding implements Callable<ActionRating> {
     private static int nPackages = 4;
 
-    private int soundings;
+    private int nVariation;
     private int victories;
     private Action action;
     private ExecutorService executor;
     private Board board;
 
-    public Sounding(Board board, Action action, int soundings) {
+    public Sounding(Board board, Action action, int nVariation) {
         executor = Executors.newFixedThreadPool(nPackages);
         this.board = board;
         this.action = action;
-        this.soundings = soundings;
+        this.nVariation = nVariation;
         this.victories = 0;
     }
 
+    /**
+     * Executes base action
+     * Analyze the board parallel
+     * @return rating of defined action
+     */
     @Override
     public ActionRating call() {
         try {
             board.submit(action);
             if (!board.isFinished()) {
-                int s = soundings / nPackages;
+                int s = nVariation / nPackages;
                 SoundingPackage[] packages = new SoundingPackage[nPackages];
                 for (int i = 0; i < nPackages; i++) {
                     packages[i] = new SoundingPackage(board, action, s);
                 }
                 List<Future<Integer>> results = executor.invokeAll(Arrays.asList(packages));
                 for (Future<Integer> result : results) {
+                    //combine part results
                     victories += result.get();
                 }
             } else {

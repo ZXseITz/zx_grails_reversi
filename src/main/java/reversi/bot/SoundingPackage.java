@@ -10,26 +10,29 @@ import java.util.concurrent.Callable;
  * Created by Claudio on 22.05.2017.
  */
 public class SoundingPackage implements Callable<Integer> {
-    private int soundings;
+    private int nVariation;
     private int victories;
     private Action action;
     private Board board;
 
-    public SoundingPackage(Board board, Action action, int soundings) {
+    public SoundingPackage(Board board, Action action, int nVariation) {
         this.board = board;
         this.action = action;
-        this.soundings = soundings;
+        this.nVariation = nVariation;
     }
 
     @Override
     public Integer call() {
-        for (int i = 0; i < soundings; i++) {
+        for (int i = 0; i < nVariation; i++) {
             sounding(board.clone());
         }
-//        System.out.println(this);
         return victories;
     }
 
+    /**
+     * Sounding algorithm
+     * @param board current board after base action
+     */
     private void sounding(Board board) {
         while (!board.isFinished()) {
             List<Action> list = board.getMostLikelyActions(board.getCurrentPlayer());

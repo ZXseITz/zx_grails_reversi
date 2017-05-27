@@ -32,14 +32,13 @@ public class RoundBot extends Round {
         return player;
     }
 
-    public Token.Color getPlayerColor() {
-        return playerColor;
-    }
-
     public Bot getBot() {
         return bot;
     }
 
+    /**
+     * Starts a new bot round and sends json to the players
+     */
     @Override
     public void start() {
         Token[] selection = getSelection(getBoard(), playerColor);
@@ -52,6 +51,11 @@ public class RoundBot extends Round {
         }
     }
 
+    /**
+     * Handles the place action of the player
+     * @param player acting player
+     * @param xy {x, y} of the source token
+     */
     @Override
     public void place(Player player, int[] xy) {
         PlacingAction a = new PlacingAction(playerColor, xy[0], xy[1]);
@@ -61,6 +65,7 @@ public class RoundBot extends Round {
                 String json = JSONHandler.buildJSONError(JSONMessage.Error.INVALID_ACTION);
                 player.send(json);
             } else {
+                //confirm placing
                 String json = JSONHandler.buildJSONPlaceClient(changed.getPlayer(), getBoard().getPlacedTokens(),
                         changed.getSource(), changed.getNeighbours());
                 player.send(json);
@@ -70,6 +75,10 @@ public class RoundBot extends Round {
         }
     }
 
+    /**
+     * Handles the pass action of a player
+     * @param player acting player
+     */
     @Override
     public void pass(Player player) {
         PassAction a = new PassAction(playerColor);
@@ -79,6 +88,7 @@ public class RoundBot extends Round {
                 String json = JSONHandler.buildJSONError(JSONMessage.Error.INVALID_ACTION);
                 player.send(json);
             } else {
+                //confirm passing
                 String json = JSONHandler.buildJSONPassClient(playerColor);
                 player.send(json);
 
@@ -87,6 +97,10 @@ public class RoundBot extends Round {
         }
     }
 
+    /**
+     * Sends ending if round is now finished
+     * Request an answer from the bot
+     */
     private void respond() {
         if (getBoard().isFinished()) {
             sendEnding();
@@ -100,11 +114,16 @@ public class RoundBot extends Round {
         }
     }
 
+    /**
+     * Handles the bot action
+     * @param action bot action
+     */
     private void botAction(Action action) {
         Board board = getBoard();
         if (action instanceof PlacingAction) {
             ChangedAction changed = board.submit(action);
             Token[] selection = getSelection(board, playerColor);
+            //send bot action to the client
             String json = JSONHandler.buildJSONPlaceOpponent(changed.getPlayer(), board.getPlacedTokens(),
                     changed.getSource(), changed.getNeighbours(), selection, !board.isFinished() ? 1 : 0);
             player.send(json);
@@ -115,6 +134,7 @@ public class RoundBot extends Round {
         } else if (action instanceof PassAction) {
             ChangedAction changed = board.submit(action);
             Token[] selection = getSelection(board, playerColor);
+            //send bot action to the client
             String json = JSONHandler.buildJSONPassOpponent(changed.getPlayer(), selection,
                     !board.isFinished() ? 1 : 0);
             player.send(json);
@@ -125,6 +145,9 @@ public class RoundBot extends Round {
         }
     }
 
+    /**
+     * Handles the ending, if a round is now finished
+     */
     private void sendEnding() {
         int win = getBoard().winner(playerColor);
         String json = JSONHandler.buildJSONEnd(win);

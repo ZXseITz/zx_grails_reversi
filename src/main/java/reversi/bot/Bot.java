@@ -22,6 +22,11 @@ public class Bot {
         this.color = color;
     }
 
+    /**
+     * Returns the best action of current board
+     * @param board current board after the human has played
+     * @return answer action
+     */
     public Future<Action> submit (Board board) {
         if (board.getCurrentPlayer() != color) throw new IllegalArgumentException("Human turn's");
         if (board.isFinished()) throw new IllegalArgumentException("Game is already finished");
@@ -30,11 +35,13 @@ public class Bot {
             List<Action> pActions = board.getPossibleActions(board.getCurrentPlayer());
             List<Sounding> tasks = new ArrayList<>(pActions.size());
             for (Action action : pActions) {
+                //analyze each possible action
                 Sounding s = new Sounding(board.clone(), action, 4000);
                 tasks.add(s);
             }
             List<Future<ActionRating>> ars = exSounding.invokeAll(tasks);
             for (Future<ActionRating> f : ars) {
+                //notice best action
                 if (bestAction == null || bestAction.getVictories() < f.get().getVictories())
                     bestAction = f.get();
             }
