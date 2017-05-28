@@ -28,7 +28,6 @@ public class TestSoundingPackage {
                 new PlacingAction(Token.Color.WHITE, 4, 2),
                 new PlacingAction(Token.Color.WHITE, 2, 4)
         ));
-
         board = Mockito.mock(Board.class);
         Mockito.when(board.submit(Mockito.any(Action.class))).thenReturn(null);
         Mockito.when(board.getMostLikelyActions(Mockito.any(Token.Color.class))).thenReturn(list);
@@ -52,7 +51,7 @@ public class TestSoundingPackage {
         });
         Mockito.when(board.winner(Mockito.any(Token.Color.class))).then(new Answer<Integer>() {
             private int count = 0;
-            //8 victories, 1 defeat, 1 tie => 7
+            //8 victories, 1 defeats, 1 ties => 7
             @Override
             public Integer answer(InvocationOnMock invocation) throws Throwable {
                 if (++count < 8) return 1;
@@ -85,7 +84,7 @@ public class TestSoundingPackage {
         });
         Mockito.when(board.winner(Mockito.any(Token.Color.class))).then(new Answer<Integer>() {
             private int count = 0;
-            //2 victories, 15 defeat, 3 tie => -13
+            //2 victories, 15 defeats, 3 ties => -13
             @Override
             public Integer answer(InvocationOnMock invocation) throws Throwable {
                 if (++count < 15) return -1;
