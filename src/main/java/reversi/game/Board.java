@@ -42,22 +42,47 @@ public class Board {
                 tokens[i][j] = new Token(j, i);
             }
         }
-        currentPlayer = Token.Color.WHITE;
-        placedTokens = new int[2];
-        prevPassed = false;
-        finished = false;
+        this.currentPlayer = Token.Color.WHITE;
+        this.placedTokens = new int[2];
+        this.prevPassed = false;
+        this.finished = false;
     }
 
+    /**
+     * Testing constructor
+     * @param board board containing color as value
+     * @param currentPlayer color of current player
+     * @param placedTokens {white, black} current number of placed tokens
+     * @param prevPassed if previous has passed
+     * @param finished if game is now finished
+     */
+    Board(int[][] board, Token.Color currentPlayer, int[] placedTokens, boolean prevPassed, boolean finished) {
+        for (int i = 0; i < 8; i++) {
+            for (int j = 0; j < 8; j++) {
+                tokens[i][j] = new Token(j, i);
+                tokens[i][j].setColor(Token.getColorFromValue(board[i][j]));
+            }
+        }
+        this.currentPlayer = currentPlayer;
+        this.placedTokens = placedTokens;
+        this.prevPassed = prevPassed;
+        this.finished = finished;
+    }
+
+    /**
+     * Copy constructor
+     * @param board original board
+     */
     private Board(Board board) {
         for (int i = 0; i < 8; i++) {
             for (int j = 0; j < 8; j++) {
                 this.tokens[i][j] = board.get(j, i).clone();
             }
         }
-        currentPlayer = board.currentPlayer;
-        placedTokens = board.placedTokens.clone();
-        prevPassed = board.prevPassed;
-        finished = board.finished;
+        this.currentPlayer = board.currentPlayer;
+        this.placedTokens = board.placedTokens.clone();
+        this.prevPassed = board.prevPassed;
+        this.finished = board.finished;
     }
 
     @FunctionalInterface
@@ -146,7 +171,7 @@ public class Board {
         List<Token> selectables = new ArrayList<>(20);
         if (!isFinished() && color == getCurrentPlayer()) {
             iterateBoard((token, x, y) -> {
-                if (!token.isPlaced() && validatePlacing(token, color)) {
+                if (validatePlacing(token, color)) {
                     selectables.add(token);
                 }
             });
@@ -164,17 +189,19 @@ public class Board {
         boolean inBoard = false;
         int n, tx, ty;
 
-        for (int[] loopVar : loopVars) {
-            tx = source.getU();
-            ty = source.getV();
-            n = 0;
-            do {
-                tx += loopVar[0];
-                ty += loopVar[1];
-                n++;
-                inBoard = tx >= 0 && tx < 8 && ty >= 0 && ty < 8;
-            } while (inBoard && get(tx, ty).getColor() == Token.getOpposite(player));
-            if (inBoard && get(tx, ty).getColor() == player && n > 1) return true;
+        if (!source.isPlaced()) {
+            for (int[] loopVar : loopVars) {
+                tx = source.getU();
+                ty = source.getV();
+                n = 0;
+                do {
+                    tx += loopVar[0];
+                    ty += loopVar[1];
+                    n++;
+                    inBoard = tx >= 0 && tx < 8 && ty >= 0 && ty < 8;
+                } while (inBoard && get(tx, ty).getColor() == Token.getOpposite(player));
+                if (inBoard && get(tx, ty).getColor() == player && n > 1) return true;
+            }
         }
         return false;
     }
@@ -290,17 +317,19 @@ public class Board {
             PlacingAction p = (PlacingAction) a;
             if (!isFinished() && p.getPlayer() == getCurrentPlayer()) {
                 Token source = get(p.getX(), p.getY());
-                List<Token> neighbours = detectNeighbours(source, p.getPlayer());
-                Token[] neighboursArray = new Token[neighbours.size()];
-                neighbours.toArray(neighboursArray);
-                if (neighbours.size() > 0) {
-                    source.setColor(p.getPlayer());
-                    for (Token t : neighbours)
-                        t.setColor(p.getPlayer());
-                    setPrevPassed(false);
-                    updatePlacedTokens(neighbours.size());
-                    swapCurrentPlayer();
-                    return new ChangedAction(p.getPlayer(), source, neighboursArray);
+                if (!source.isPlaced()) {
+                    List<Token> neighbours = detectNeighbours(source, p.getPlayer());
+                    Token[] neighboursArray = new Token[neighbours.size()];
+                    neighbours.toArray(neighboursArray);
+                    if (neighbours.size() > 0) {
+                        source.setColor(p.getPlayer());
+                        for (Token t : neighbours)
+                            t.setColor(p.getPlayer());
+                        setPrevPassed(false);
+                        updatePlacedTokens(neighbours.size());
+                        swapCurrentPlayer();
+                        return new ChangedAction(p.getPlayer(), source, neighboursArray);
+                    }
                 }
             }
         } else if (a instanceof PassAction) {

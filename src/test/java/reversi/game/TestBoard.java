@@ -1,6 +1,5 @@
 package reversi.game;
 
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.Assert;
 import reversi.actions.PassAction;
@@ -12,15 +11,11 @@ import java.util.List;
  * Created by Claudio on 27.05.2017.
  */
 public class TestBoard {
-    Board board;
-
-    @Before
-    public void setup() {
-        board = new Board();
-    }
+    private Board board;
 
     @Test
     public void testSetupBoard() {
+        board = new Board();
         board.setUpBoard();
         board.iterateBoard((token, x, y) -> {
             if ((x == 3 && y == 3) || (x == 4 && y == 4)) Assert.assertEquals(Token.Color.WHITE, token.getColor());
@@ -37,7 +32,17 @@ public class TestBoard {
 
     @Test
     public void testDetectNeighbours() {
-        scenario(board);
+        int[][] scenario = new int[][]{
+                {0, 0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 2, 1, 0, 0, 0, 0},
+                {0, 0, 2, 1, 2, 2, 0, 0},
+                {0, 0, 2, 2, 1, 0, 0, 0},
+                {0, 0, 1, 2, 1, 1, 0, 0},
+                {0, 0, 2, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0, 0},
+        };
+        board = new Board(scenario, Token.Color.WHITE, new int[] {6, 8}, false, false);
         singleDetect(board, new int[][] {{6, 1}}, Token.Color.WHITE);
         singleDetect(board, new int[][] {{4, 6}}, Token.Color.WHITE);
 
@@ -63,7 +68,7 @@ public class TestBoard {
 
     private void singleDetect(Board board, int[][] tokens, Token.Color color) {
         List<Token> list = board.detectNeighbours(board.get(tokens[0][0], tokens[0][1]), color);
-        Assert.assertEquals(list.size(), tokens.length - 1);
+        Assert.assertEquals(tokens.length - 1, list.size());
         for (int i = 1; i < tokens.length; i++) {
             Assert.assertSame(board.get(tokens[i][0], tokens[i][1]), list.get(i - 1));
         }
@@ -71,7 +76,17 @@ public class TestBoard {
 
     @Test
     public void testGetSelectableTokens() {
-        scenario(board);
+        int[][] scenario = new int[][]{
+                {0, 0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 2, 1, 0, 0, 0, 0},
+                {0, 0, 2, 1, 2, 2, 0, 0},
+                {0, 0, 2, 2, 1, 0, 0, 0},
+                {0, 0, 1, 2, 1, 1, 0, 0},
+                {0, 0, 2, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0, 0},
+        };
+        board = new Board(scenario, Token.Color.WHITE, new int[] {6, 8}, false, false);
         int[][] tw = new int[][] {{1, 1}, {2, 1}, {1, 2}, {4, 2}, {5, 2}, {6, 2},
                 {1, 3}, {6, 3}, {1, 4}, {5, 4}, {1, 5}, {3, 6}, {1, 7}, {2, 7}};
         List<Token> lw = board.getSelectableTokens(Token.Color.WHITE);
@@ -85,39 +100,179 @@ public class TestBoard {
     }
 
     @Test
-    public void testSubmit() {
-        board.setUpBoard();
+    public void testSubmitPlace() {
+        int[][] scenario = new int[][]{
+                {0, 0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 2, 1, 0, 0, 0, 0},
+                {0, 0, 2, 1, 2, 2, 0, 0},
+                {0, 0, 2, 2, 1, 0, 0, 0},
+                {0, 0, 1, 2, 1, 1, 0, 0},
+                {0, 0, 2, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0, 0},
+        };
+        board = new Board(scenario, Token.Color.WHITE, new int[] {6, 8}, false, false);
         Assert.assertNull(board.submit(new PassAction(Token.Color.WHITE)));
-        Assert.assertNull(board.submit(new PlacingAction(Token.Color.WHITE, 0, 0)));
-        Assert.assertNull(board.submit(new PlacingAction(Token.Color.BLACK, 3, 2)));
-        Assert.assertEquals(board.getCurrentPlayer(), Token.Color.WHITE);
-        Assert.assertFalse(board.hasPrevPassed());
-        Assert.assertFalse(board.isFinished());
-        Assert.assertArrayEquals(new int[]{2, 2}, board.getPlacedTokens());
-
-        Assert.assertNotNull(board.submit(new PlacingAction(Token.Color.WHITE, 4, 2)));
-        Assert.assertEquals(board.getCurrentPlayer(), Token.Color.BLACK);
-        Assert.assertFalse(board.hasPrevPassed());
-        Assert.assertFalse(board.isFinished());
-        Assert.assertArrayEquals(new int[]{4, 1}, board.getPlacedTokens());
-
         Assert.assertNull(board.submit(new PassAction(Token.Color.BLACK)));
-        Assert.assertNull(board.submit(new PlacingAction(Token.Color.BLACK, 0, 0)));
-        Assert.assertNull(board.submit(new PlacingAction(Token.Color.WHITE, 3, 5)));
-        Assert.assertEquals(board.getCurrentPlayer(), Token.Color.BLACK);
-        Assert.assertFalse(board.hasPrevPassed());
-        Assert.assertFalse(board.isFinished());
-        Assert.assertArrayEquals(new int[]{4, 1}, board.getPlacedTokens());
-
-        Assert.assertNotNull(board.submit(new PlacingAction(Token.Color.BLACK, 3, 2)));
+        Assert.assertNull(board.submit(new PlacingAction(Token.Color.WHITE, 0, 0)));
+        Assert.assertNull(board.submit(new PlacingAction(Token.Color.WHITE, 3, 2)));
+        Assert.assertNull(board.submit(new PlacingAction(Token.Color.BLACK, 3, 1)));
         Assert.assertEquals(board.getCurrentPlayer(), Token.Color.WHITE);
         Assert.assertFalse(board.hasPrevPassed());
         Assert.assertFalse(board.isFinished());
-        Assert.assertArrayEquals(new int[]{3, 3}, board.getPlacedTokens());
+        Assert.assertArrayEquals(new int[]{6, 8}, board.getPlacedTokens());
+
+        Assert.assertNotNull(board.submit(new PlacingAction(Token.Color.WHITE, 6, 3)));
+        Assert.assertEquals(board.getCurrentPlayer(), Token.Color.BLACK);
+        Assert.assertFalse(board.hasPrevPassed());
+        Assert.assertFalse(board.isFinished());
+        Assert.assertArrayEquals(new int[]{9, 6}, board.getPlacedTokens());
+    }
+
+    @Test
+    public void testSubmitPass() {
+        int[][] scenario = new int[][]{
+                {0, 1, 2, 2, 1, 2, 2, 2},
+                {0, 0, 1, 2, 2, 2, 1, 0},
+                {0, 0, 1, 2, 2, 2, 1, 0},
+                {0, 0, 1, 2, 2, 1, 0, 0},
+                {0, 0, 1, 2, 1, 2, 1, 0},
+                {0, 0, 1, 1, 2, 2, 1, 0},
+                {0, 0, 0, 0, 1, 1, 1, 0},
+                {0, 0, 0, 0, 0, 0, 0, 0},
+        };
+        board = new Board(scenario, Token.Color.WHITE, new int[] {17, 17}, false, false);
+        Assert.assertNull(board.submit(new PlacingAction(Token.Color.WHITE, 7, 1)));
+        Assert.assertNull(board.submit(new PlacingAction(Token.Color.WHITE, 7, 0)));
+        Assert.assertNull(board.submit(new PlacingAction(Token.Color.BLACK, 1, 3)));
+        Assert.assertNull(board.submit(new PassAction(Token.Color.BLACK)));
+        Assert.assertEquals(board.getCurrentPlayer(), Token.Color.WHITE);
+        Assert.assertFalse(board.hasPrevPassed());
+        Assert.assertFalse(board.isFinished());
+        Assert.assertArrayEquals(new int[] {17, 17}, board.getPlacedTokens());
+
+        Assert.assertNotNull(board.submit(new PassAction(Token.Color.WHITE)));
+        Assert.assertEquals(board.getCurrentPlayer(), Token.Color.BLACK);
+        Assert.assertTrue(board.hasPrevPassed());
+        Assert.assertFalse(board.isFinished());
+        Assert.assertArrayEquals(new int[] {17, 17}, board.getPlacedTokens());
+    }
+
+    @Test
+    public void testPlaceFinish() {
+        int[][] scenario = new int[][]{
+                {1, 1, 1, 1, 2, 2, 2, 2},
+                {1, 1, 1, 1, 1, 1, 2, 2},
+                {1, 1, 2, 1, 2, 2, 2, 1},
+                {1, 1, 2, 1, 2, 2, 1, 1},
+                {2, 2, 2, 2, 2, 2, 1, 1},
+                {2, 2, 2, 1, 2, 1, 1, 1},
+                {1, 2, 2, 2, 2, 1, 1, 1},
+                {0, 2, 2, 2, 2, 1, 1, 1},
+        };
+        board = new Board(scenario, Token.Color.BLACK, new int[] {32, 31}, false, false);
+        Assert.assertNotNull(board.submit(new PlacingAction(Token.Color.BLACK, 0, 7)));
+        Assert.assertEquals(board.getCurrentPlayer(), Token.Color.WHITE);
+        Assert.assertFalse(board.hasPrevPassed());
+        Assert.assertTrue(board.isFinished());
+        Assert.assertArrayEquals(new int[]{31, 33}, board.getPlacedTokens());
+    }
+
+    @Test
+    public void testPassFinished() {
+        int[][] scenario = new int[][]{
+                {0, 1, 2, 2, 1, 2, 2, 2},
+                {0, 0, 1, 2, 2, 2, 1, 0},
+                {0, 0, 1, 2, 2, 2, 1, 0},
+                {0, 0, 1, 2, 2, 1, 0, 0},
+                {0, 0, 1, 2, 1, 2, 1, 0},
+                {0, 0, 1, 1, 2, 2, 1, 0},
+                {0, 0, 0, 0, 1, 1, 1, 0},
+                {0, 0, 0, 0, 0, 0, 0, 0},
+        };
+        board = new Board(scenario, Token.Color.WHITE, new int[] {17, 17}, true, false);
+        Assert.assertNotNull(board.submit(new PassAction(Token.Color.WHITE)));
+        Assert.assertEquals(board.getCurrentPlayer(), Token.Color.BLACK);
+        Assert.assertTrue(board.hasPrevPassed());
+        Assert.assertTrue(board.isFinished());
+        Assert.assertArrayEquals(new int[]{17, 17}, board.getPlacedTokens());
+    }
+
+    @Test
+    public void testWinVictoryWhite() {
+        int[][] scenario = new int[][]{
+                {1, 1, 1, 1, 2, 2, 2, 2},
+                {1, 1, 1, 1, 1, 1, 2, 2},
+                {1, 1, 2, 1, 2, 2, 2, 1},
+                {1, 1, 2, 1, 2, 2, 1, 1},
+                {1, 2, 2, 2, 2, 2, 1, 1},
+                {1, 2, 2, 1, 2, 1, 1, 1},
+                {1, 2, 2, 2, 2, 1, 1, 1},
+                {1, 2, 2, 2, 2, 1, 1, 1},
+        };
+        board = new Board(scenario, Token.Color.WHITE, new int[] {35, 29}, false, true);
+        Assert.assertEquals(1, board.winner(Token.Color.WHITE));
+        Assert.assertEquals(-1, board.winner(Token.Color.BLACK));
+    }
+
+    @Test
+    public void testWinDefeatWhite() {
+        int[][] scenario = new int[][]{
+                {1, 1, 1, 1, 2, 2, 2, 2},
+                {1, 1, 1, 1, 1, 1, 2, 2},
+                {1, 1, 2, 1, 2, 2, 2, 1},
+                {1, 1, 2, 1, 2, 2, 1, 1},
+                {2, 2, 2, 2, 2, 2, 1, 1},
+                {2, 2, 2, 1, 2, 1, 1, 1},
+                {2, 2, 2, 2, 2, 1, 1, 1},
+                {2, 2, 2, 2, 2, 1, 1, 1},
+        };
+        board = new Board(scenario, Token.Color.WHITE, new int[] {31, 33}, false, true);
+        Assert.assertEquals(-1, board.winner(Token.Color.WHITE));
+        Assert.assertEquals(1, board.winner(Token.Color.BLACK));
+    }
+
+    @Test
+    public void testWinTie() {
+        int[][] scenario = new int[][]{
+                {1, 1, 1, 2, 2, 2, 2, 2},
+                {1, 1, 1, 1, 1, 1, 2, 2},
+                {1, 1, 2, 1, 2, 2, 2, 1},
+                {1, 1, 2, 1, 2, 2, 1, 1},
+                {2, 2, 2, 2, 2, 2, 1, 1},
+                {2, 2, 2, 1, 2, 1, 1, 1},
+                {2, 2, 2, 2, 2, 1, 1, 1},
+                {2, 2, 2, 2, 2, 1, 1, 1},
+        };
+        board = new Board(scenario, Token.Color.WHITE, new int[] {32, 32}, false, true);
+        Assert.assertEquals(0, board.winner(Token.Color.WHITE));
+        Assert.assertEquals(0, board.winner(Token.Color.BLACK));
+    }
+
+    @Test
+    public void testWinFail() {
+        int[][] scenario = new int[][]{
+                {0, 0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 2, 1, 0, 0, 0, 0},
+                {0, 0, 2, 1, 2, 2, 0, 0},
+                {0, 0, 2, 2, 1, 0, 0, 0},
+                {0, 0, 1, 2, 1, 1, 0, 0},
+                {0, 0, 2, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0, 0},
+        };
+        try {
+            board = new Board(scenario, Token.Color.WHITE, new int[] {6, 8}, false, false);
+            board.winner(Token.Color.WHITE);
+            Assert.fail();
+        } catch (UnsupportedOperationException e) {
+            Assert.assertEquals("Game is still running", e.getMessage());
+        }
     }
 
     @Test
     public void testClone() {
+        board = new Board();
         board.setUpBoard();
         Board cloned = board.clone();
         Assert.assertNotSame(board, cloned);
@@ -130,23 +285,5 @@ public class TestBoard {
             Assert.assertNotSame(board.get(x, y), token);
             Assert.assertEquals(board.get(x, y), token);
         });
-    }
-
-    private void scenario(Board board) {
-        board.get(2, 2).setColor(Token.Color.BLACK);
-        board.get(2, 3).setColor(Token.Color.BLACK);
-        board.get(4, 3).setColor(Token.Color.BLACK);
-        board.get(5, 3).setColor(Token.Color.BLACK);
-        board.get(2, 4).setColor(Token.Color.BLACK);
-        board.get(3, 4).setColor(Token.Color.BLACK);
-        board.get(3, 5).setColor(Token.Color.BLACK);
-        board.get(2, 6).setColor(Token.Color.BLACK);
-
-        board.get(3, 2).setColor(Token.Color.WHITE);
-        board.get(3, 3).setColor(Token.Color.WHITE);
-        board.get(4, 4).setColor(Token.Color.WHITE);
-        board.get(2, 5).setColor(Token.Color.WHITE);
-        board.get(4, 5).setColor(Token.Color.WHITE);
-        board.get(5, 5).setColor(Token.Color.WHITE);
     }
 }
