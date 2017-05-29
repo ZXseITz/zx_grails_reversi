@@ -69,8 +69,8 @@ public class TestReversiServer {
         RoundPVP round = Mockito.mock(RoundPVP.class);
         Mockito.doNothing().when(round).cancel(player);
         player.setRound(round);
-
         player.setState(Player.State.INGAME);
+
         server.onClose(client);
         Assert.assertEquals(0, server.getUsers().size());
         Assert.assertEquals(Player.State.OFFLINE, player.getState());
@@ -78,22 +78,38 @@ public class TestReversiServer {
     }
 
     @Test
-    public void testOnMessageNewBotgame() {
+    public void testOnMessageNewBotGame() {
         Mockito.doNothing().when(player).send(Mockito.anyString());
         server.getUsers().putIfAbsent(player.getID(), player);
-        player.setState(Player.State.ONLINE);
         player.setRound(null);
+        player.setState(Player.State.ONLINE);
         String message = "{\"type\":0,\"data\":{\"color\":1,\"gameType\":0}}";
 
         server.onMessage(message, client);
         Assert.assertTrue(player.getRound() instanceof RoundBot);
         Assert.assertEquals(Player.State.INGAME, player.getState());
-        // check if round.start() was called
         Mockito.verify(player).send(Mockito.anyString());
     }
 
     @Test
-    public void testOnMessageNewPvpgame() {
+    public void testOnMessageNewBotGameInagmePvp() {
+        RoundPVP round = Mockito.mock(RoundPVP.class);
+        Mockito.doNothing().when(round).cancel(Mockito.any(Player.class));
+        Mockito.doNothing().when(player).send(Mockito.anyString());
+        server.getUsers().putIfAbsent(player.getID(), player);
+        player.setRound(round);
+        player.setState(Player.State.INGAME);
+        String message = "{\"type\":0,\"data\":{\"color\":1,\"gameType\":0}}";
+
+        server.onMessage(message, client);
+        Assert.assertTrue(player.getRound() instanceof RoundBot);
+        Assert.assertEquals(Player.State.INGAME, player.getState());
+        Mockito.verify(round).cancel(player);   // check if inagme pvp round was cancelled
+        Mockito.verify(player).send(Mockito.anyString());
+    }
+
+    @Test
+    public void testOnMessageNewPvpGame() {
         Mockito.doNothing().when(player).send(Mockito.anyString());
         server.getUsers().putIfAbsent(player.getID(), player);
         String message = "{\"type\":0,\"data\":{\"color\":2,\"gameType\":1}}";
@@ -103,17 +119,49 @@ public class TestReversiServer {
     }
 
     @Test
+    public void testOnMessageNewPvpGameIngamePvp() {
+        RoundPVP round = Mockito.mock(RoundPVP.class);
+        Mockito.doNothing().when(round).cancel(Mockito.any(Player.class));
+        Mockito.doNothing().when(player).send(Mockito.anyString());
+        server.getUsers().putIfAbsent(player.getID(), player);
+        player.setRound(round);
+        player.setState(Player.State.INGAME);
+        String message = "{\"type\":0,\"data\":{\"color\":2,\"gameType\":1}}";
+
+        server.onMessage(message, client);
+        Mockito.verify(round).cancel(player);   // check if inagme pvp round was cancelled
+        Mockito.verify(pvp).waitForMatching(Mockito.eq(player), Mockito.any(Token.Color.class));
+    }
+
+    @Test
     public void testOnMessageNewgameInvalid() {
         Mockito.doNothing().when(player).send(Mockito.anyString());
         server.getUsers().putIfAbsent(player.getID(), player);
-        player.setState(Player.State.ONLINE);
         player.setRound(null);
+        player.setState(Player.State.ONLINE);
         String message = "{\"type\":0,\"data\":{\"color\":0,\"gameType\":0}}";
 
         server.onMessage(message, client);
         Assert.assertNull(player.getRound());
         Assert.assertEquals(Player.State.ONLINE, player.getState());
-        // check if round.start() was not called
+        Mockito.verify(player, Mockito.never()).send(Mockito.anyString());
+        Mockito.verify(pvp, Mockito.never()).waitForMatching(Mockito.any(Player.class), Mockito.any(Token.Color.class));
+    }
+
+    @Test
+    public void testOnMessageNewgameInvalidIngame() {
+        RoundPVP round = Mockito.mock(RoundPVP.class);
+        Mockito.doNothing().when(round).cancel(Mockito.any(Player.class));
+        Mockito.doNothing().when(player).send(Mockito.anyString());
+        server.getUsers().putIfAbsent(player.getID(), player);
+        player.setRound(round);
+        player.setState(Player.State.INGAME);
+        String message = "{\"type\":0,\"data\":{\"color\":0,\"gameType\":0}}";
+
+        server.onMessage(message, client);
+        Assert.assertNotNull(player.getRound());
+        Assert.assertEquals(Player.State.INGAME, player.getState());
+        Mockito.verify(round, Mockito.never()).cancel(player);  // check if no round was cancelled
         Mockito.verify(player, Mockito.never()).send(Mockito.anyString());
         Mockito.verify(pvp, Mockito.never()).waitForMatching(Mockito.any(Player.class), Mockito.any(Token.Color.class));
     }

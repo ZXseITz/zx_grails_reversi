@@ -47,32 +47,11 @@ public class TestPVP {
     }
 
     @Test
-    public void testWaitForMatchingIngameBot() {
-        player.setState(Player.State.INGAME);
+    public void testWaitForMatchingWaiting() {
+        player.setState(Player.State.WAITING);
 
-        Assert.assertTrue(pvp.waitForMatching(player, Token.Color.WHITE));
-        Assert.assertEquals(Player.State.WAITING, player.getState());
         Assert.assertFalse(pvp.waitForMatching(player, Token.Color.WHITE));
-        Assert.assertFalse(pvp.waitForMatching(player, Token.Color.BLACK));
-    }
-
-    @Test
-    public void testWaitForMatchingIngamePvp() {
-        player.setState(Player.State.INGAME);
-        player2.setState(Player.State.INGAME);
-        Mockito.doNothing().when(player2).send(Mockito.anyString());
-
-        RoundPVP round = Mockito.mock(RoundPVP.class);
-        Mockito.when(round.getOpponent(player)).thenReturn(player2);
-        Mockito.doCallRealMethod().when(round).cancel(Mockito.any(Player.class));
-
-        player.setRound(round);
-        player2.setRound(round);
-
-        Assert.assertTrue(pvp.waitForMatching(player, Token.Color.BLACK));
         Assert.assertEquals(Player.State.WAITING, player.getState());
-        Assert.assertEquals(Player.State.ONLINE, player2.getState());
-        Assert.assertNull(player2.getRound());
         Assert.assertFalse(pvp.waitForMatching(player, Token.Color.WHITE));
         Assert.assertFalse(pvp.waitForMatching(player, Token.Color.BLACK));
     }
@@ -120,6 +99,33 @@ public class TestPVP {
 
         // check other thread
         Assert.assertEquals(Player.State.OFFLINE, player.getState());
+        Assert.assertEquals(Player.State.WAITING, player2.getState());
+        Assert.assertNull(player.getRound());
+        Assert.assertNull(player.getRound());
+        // check if round.start() was not called
+        Mockito.verify(player, Mockito.never()).send(Mockito.anyString());
+        Mockito.verify(player2, Mockito.never()).send(Mockito.anyString());
+    }
+
+    @Test
+    public void testMatchingIngame() {
+        player.setState(Player.State.ONLINE);
+        player.setRound(null);
+        player2.setState(Player.State.ONLINE);
+        player2.setRound(null);
+
+        Assert.assertTrue(pvp.waitForMatching(player, Token.Color.WHITE));
+        player.setState(Player.State.INGAME);
+        Assert.assertTrue(pvp.waitForMatching(player2, Token.Color.BLACK));
+
+        try {
+            sleep(200);
+        } catch (InterruptedException e) {
+            //ignore
+        }
+
+        // check other thread
+        Assert.assertEquals(Player.State.INGAME, player.getState());
         Assert.assertEquals(Player.State.WAITING, player2.getState());
         Assert.assertNull(player.getRound());
         Assert.assertNull(player.getRound());

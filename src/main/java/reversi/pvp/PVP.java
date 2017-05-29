@@ -40,13 +40,7 @@ public class PVP {
      */
     public boolean waitForMatching(Player player, Token.Color playerColor) {
         synchronized (player) {
-            if (player.getState() == Player.State.INGAME) {
-                if (player.getRound() instanceof RoundPVP){
-                    ((RoundPVP) player.getRound()).cancel(player);
-                }
-                add(player, playerColor);
-                return true;
-            } else if (player.getState() == Player.State.ONLINE) {
+            if (player.getState() == Player.State.ONLINE) {
                 add(player, playerColor);
                 return true;
             }
@@ -78,9 +72,9 @@ public class PVP {
                     black.setRound(round);
                     black.setState(Player.State.INGAME);
                     round.start();
-                } else if(white.getState() == Player.State.OFFLINE && black.getState() == Player.State.WAITING) {
+                } else if(white.getState() != Player.State.WAITING && black.getState() == Player.State.WAITING) {
                     pvpBlack.add(black);
-                } else if(black.getState() == Player.State.OFFLINE && white.getState() == Player.State.WAITING) {
+                } else if(black.getState() != Player.State.WAITING && white.getState() == Player.State.WAITING) {
                     pvpWhite.add(white);
                 }
             }
