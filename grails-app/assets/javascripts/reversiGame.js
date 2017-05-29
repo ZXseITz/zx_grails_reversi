@@ -28,7 +28,7 @@ function Game() {
 
     /**
      * Initializes a new game and inform the client
-     * @param color color of this client
+     * @param color color of this client: 1 white, 2 black
      * @param selectables selectable tokens
      */
     this.setUp = function (color, selectables) {
@@ -38,7 +38,7 @@ function Game() {
         TokenHandler.setColor($('#t34'), TokenHandler.BLACK.value);
         TokenHandler.setColor($('#t43'), TokenHandler.BLACK.value);
         this.enableSelection(selectables, 0);
-        this.showInfo(`new game started as ${color}`, "info");
+        this.showInfo(`new game started as ${TokenHandler.getColorFromValue(color)}`, "info");
     };
 
     /**

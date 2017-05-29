@@ -4,7 +4,6 @@
 
 function COM() {
 }
-
 /*
 Message types
  */
