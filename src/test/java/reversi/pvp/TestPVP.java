@@ -64,8 +64,12 @@ public class TestPVP {
         Assert.assertTrue(pvp.waitForMatching(player, Token.Color.WHITE));
         Assert.assertTrue(pvp.waitForMatching(player2, Token.Color.BLACK));
 
+        /*
+        wait for matching thread
+        test can fail if sleep is too short
+          */
         try {
-            sleep(200);
+            sleep(500);
         } catch (InterruptedException e) {
             //ignore
         }
@@ -91,8 +95,12 @@ public class TestPVP {
         player.setState(Player.State.OFFLINE);
         Assert.assertTrue(pvp.waitForMatching(player2, Token.Color.BLACK));
 
+        /*
+        wait for matching thread
+        test can fail if sleep is too short
+         */
         try {
-            sleep(200);
+            sleep(500);
         } catch (InterruptedException e) {
             //ignore
         }
