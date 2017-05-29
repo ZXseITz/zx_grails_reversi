@@ -1,7 +1,31 @@
 
-
 .game {
     background: forestgreen;
+}
+
+.left {
+    float: left;
+}
+
+.right {
+    float: right;
+}
+
+.all {
+    width: 400px;
+}
+
+.font {
+    font-family: Garamond;
+}
+
+.white {
+    box-shadow: 0px 0px 0px 1px black inset;
+}
+
+.black {
+    background: black;
+    color: white;
 }
 
 .token {
@@ -14,49 +38,16 @@
     stroke-width: 1px;
 }
 
-.all {
-    width: 400px;
-}
-
-.font {
-    font-family: Garamond;
-}
-
-.box {
-    padding: 5px;
-    background: #ddddff;
-    border: 1px solid black;
-    border-radius: 10px;
-}
-
 .counterlabel {
     padding: 5px;
     width: 190px;
     text-align: center;
 }
 
-.white {
-    box-shadow: 0px 0px 0px 1px black inset;
-}
-
-.black {
-    background: black;
-    color: white;
-}
-
-#newgame {
-    position: absolute;
-    top: 450px;
-    left: 100px;
-    width: 200px;
-}
-
-.left {
-    float: left;
-}
-
-.right {
-    float: right;
+.box {
+    padding: 5px;
+    border: 1px solid black;
+    border-radius: 10px;
 }
 
 .combobox {
@@ -65,11 +56,24 @@
 
 .newgamebutton {
     margin: 2px;
-    width: 200px;
+    width: 196px;
     border-radius: 5px;
     box-shadow: none;
     border: 1px solid black;
     background: #ffdddd;
+}
+
+.infocell {
+    display: table-cell;
+    vertical-align: middle;
+}
+
+#newgame {
+    position: absolute;
+    top: 450px;
+    left: 100px;
+    width: 200px;
+    background: #ddddff;
 }
 
 #info {
@@ -80,11 +84,7 @@
     top: 175px;
     overflow: hidden;
     display: none;
-}
-
-.infocell {
-    display: table-cell;
-    vertical-align: middle;
+    background: white;
 }
 
 #infoimagecell {

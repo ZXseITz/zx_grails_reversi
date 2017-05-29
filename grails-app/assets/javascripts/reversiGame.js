@@ -16,6 +16,7 @@ function Game() {
 
     this.setUpUI = function () {
         TokenHandler.resetToken($(".token"));
+        $("#info").css("background", "white");
     };
 
     this.setUp = function (color, selectables) {
@@ -64,7 +65,15 @@ function Game() {
     };
 
     this.end = function (win) {
-        this.showInfo(win > 0 ? "Victory" : (win < 0 ? "Defeat" : "Remis"), "info");
+        if (win > 0) {
+            $("#info").css("background", "#ddddff");
+            this.showInfo("Victory", "info");
+        } else if(win < 0) {
+            $("#info").css("background", "#ffdddd");
+            this.showInfo("Defeat", "info");
+        } else {
+            this.showInfo("Tie", "info");
+        }
     };
 
     this.showInfo = function(text, type) {
