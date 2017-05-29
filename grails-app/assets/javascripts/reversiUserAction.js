@@ -4,14 +4,10 @@
 function userAction() {
 }
 
-userAction.mouseOver = function(e) {
-    if (TokenHandler.validate(e)) TokenHandler.fadeInToken(e, game.getPlayerColor());
-};
-
-userAction.mouseOut = function(e) {
-    if (TokenHandler.validate(e)) TokenHandler.fadeOutToken(e);
-};
-
+/**
+ * Handles the click action
+ * @param e token
+ */
 userAction.click = function(e) {
     if (TokenHandler.validate(e)) {
         game.disableSelection();
@@ -19,6 +15,9 @@ userAction.click = function(e) {
     }
 };
 
+/**
+ * Handles the new game action
+ */
 userAction.newGame = function() {
     const color = $("#gamecolor").val();
     const gType = $("#gametype").val();

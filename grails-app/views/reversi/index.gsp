@@ -23,7 +23,6 @@
 
 <body>
 <%
-    //needs to stay in body todo remove in production code
     double width = 400
     double height = 400
     double a = width / 8
@@ -54,6 +53,7 @@
                     cx="${u * a + a / 2}"
                     cy="${v * b + b / 2}"
                     class="token"
+                    %{-- save token specific data --}%
                     data-selectable="0"
                     data-u="${u}"
                     data-v="${v}"
@@ -94,6 +94,7 @@
     <!-- infobox tooltip for ingame information or error messages -->
     <div id="info" class="box">
         <div id="infoimagecell" class="infocell">
+            <!-- save image path in <img> -->
             <img id="infoimage" src="" data-info="${asset.assetPath(src: 'info.png')}"
                  data-error="${asset.assetPath(src: 'error.png')}">
         </div>

@@ -4,6 +4,10 @@
 function Connection(game) {
     let socket;
 
+    /**
+     * Connects the client to the server
+     * @param url
+     */
     this.connect = function (url) {
         socket = new WebSocket(url);
 
@@ -20,6 +24,10 @@ function Connection(game) {
             console.log(e);
         };
 
+        /**
+         * Handles the incoming json
+         * @param message server message
+         */
         socket.onmessage = function(message) {
             let json = JSON.parse(message.data);
             console.log("received:");
@@ -55,10 +63,18 @@ function Connection(game) {
         };
     };
 
+    /**
+     * Disconnect the client from the server
+     */
     this.disconnect = function() {
         socket.close();
     };
 
+    /**
+     * Send a json message to the server
+     * @param type message type
+     * @param data
+     */
     function sendJSON(type, data) {
         let json = JSON.stringify({
             'type': type,
@@ -68,14 +84,27 @@ function Connection(game) {
         socket.send(json);
     }
 
+    /**
+     * Sends a new game request
+     * @param color to play: 1 white, 2 black
+     * @param gtype game type: 0 botgame, 1 player vs player
+     */
     this.newGame = function (color, gtype) {
         sendJSON(COM.CLIENT_NEW_GAME, {'color': color, 'gameType': gtype});
     };
 
+    /**
+     * Sends a new place request
+     * @param u x coordinate
+     * @param v y coordinate
+     */
     this.place = function (u, v) {
         sendJSON(COM.CLIENT_PLACE, {'x': u, 'y': v});
     };
 
+    /**
+     * Sends a new pass request
+     */
     this.pass = function () {
         sendJSON(COM.CLIENT_PASS);
     };
