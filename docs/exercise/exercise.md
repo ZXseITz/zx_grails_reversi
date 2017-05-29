@@ -22,7 +22,7 @@ How to test the project:
 Unit tests under `src/test/java/reversi`
 
 Project description:
-See `reversiDescription.html`
+See `ReversiDescription.html`
 
 External contributions:
 * `javax.servlet` (web servlet)

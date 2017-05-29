@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>ReversiDescription</title>
+</head>
+<body>
+    <h1>General descrption</h1>
+    <p>Webec graded exercise: Reversi</p>
+    <p>Provides a service to play reversi against a bot or another player</p>
+    <p>Developed by Claudio Seitz, May 2017</p>
+
+    <h1>Backend</h1>
+    <h2>Web server</h2>
+    <p>Unique web server, all clients connect to this server</p>
+    <p>Clients and web server communicates via web sockets and json messages</p>
+    <p>Handles and validates all messages from each client</p>
+    <h2>Board</h2>
+    <p>Validates the incoming action</p>
+    <p>handles the game logic</p>
+    <h2>Bot</h2>
+    <p>Evaluates his best action using a sounding algorithm</p>
+    <h3>Sounding algorithm</h3>
+    <p>Implemented concurrently</p>
+    <p>Looks at which action the bot has the most likely opportunity to win the game</p>
+    <p>Calculates 4000 variants per action</p>
+    <h2>Pvp</h2>
+    <p>Matches a white waiting player with a black waiting player and starts a new pvp round</p>
+    <h2>Round</h2>
+    <p>Handles the game sequence</p>
+    <p>Sends json messages to the clients</p>
+    <h3>Bot round</h3>
+    <p>Player vs bot</p>
+    <h3>Pvp round</h3>
+    <p>Player vs player</p>
+    <p>Handles the spacial cases, if there is a problem of one player</p>
+
+    <h1>Frontend</h1>
+    <h2>Connection</h2>
+    <p>Handles incoming server json messages</p>
+    <p>Sends client actions to the server as json message</p>
+    <h2>Game</h2>
+    <p>Visualizes the incoming json messages</p>
+    <h2>UserHandler</h2>
+    <p>Handles the user action</p>
+    <h2>TokenHandler</h2>
+    <p>Handles the behaviour of a token</p>
+</body>
+</html>
