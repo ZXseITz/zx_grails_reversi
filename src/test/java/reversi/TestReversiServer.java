@@ -134,7 +134,7 @@ public class TestReversiServer {
     }
 
     @Test
-    public void testOnMessageNewgameInvalid() {
+    public void testOnMessageNewGameInvalid() {
         Mockito.doNothing().when(player).send(Mockito.anyString());
         server.getUsers().putIfAbsent(player.getID(), player);
         player.setRound(null);
@@ -149,7 +149,7 @@ public class TestReversiServer {
     }
 
     @Test
-    public void testOnMessageNewgameInvalidIngame() {
+    public void testOnMessageNewGameInvalidIngame() {
         RoundPVP round = Mockito.mock(RoundPVP.class);
         Mockito.doNothing().when(round).cancel(Mockito.any(Player.class));
         Mockito.doNothing().when(player).send(Mockito.anyString());

@@ -3,7 +3,6 @@ package reversi;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import mvc.ReversiEndPointConfig;
-import net.sf.ehcache.util.concurrent.ConcurrentHashMap;
 import reversi.bot.Bot;
 import reversi.bot.RoundBot;
 import reversi.game.*;
@@ -20,6 +19,7 @@ import javax.websocket.*;
 import javax.websocket.server.ServerContainer;
 import javax.websocket.server.ServerEndpoint;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Created by Claudio on 17.05.2017.
