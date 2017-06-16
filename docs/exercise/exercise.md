@@ -45,4 +45,28 @@ I'm particular proud of:
 
 ## Project grading 
 
-< to be filled by lecturer>
+Index.html given and fully valid. 
+
+The game did not compile as delivered. I had to move the mvc.ReversiEndPointConfig
+to src/main/java. After that, all worked nicely.
+As long as there are many positions to consider, the cores get really busy.
+
+Functionality is the reversi game with advanced computer game play.
+The graduation scheme does not fit well for this kind of application but it 
+is without question that it deserves the maximum number of points for
+functionality.
+
+Engineering:
+- the commit log is stellar and speaks for substantial effort over many days
+- no tests
+- good comments on the JavaScript part
+
+There are so many extra points to award but the limit is 5.
+
+Congratulations!
+Your abilities as a web engineer easily surpass the content of our rather
+introductory module. 
+If the "advanced web clients" module should make it into the curriculum, 
+I hope you sign up.
+
+Grade: 6.0
